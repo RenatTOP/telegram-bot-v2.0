@@ -99,9 +99,11 @@ import re
 #         return self.__conn.execute(table.delete())
 
 from pymongo import MongoClient
+from app.settings import DATABASE
+from bson.objectid import ObjectId
 
 
-client = MongoClient(os.environ['DATABASE'])
+client = MongoClient(DATABASE)
 
 db = client.bot
 
@@ -110,9 +112,10 @@ products = db.products
 applications = db.applications
 
 
-def add_user(user_id):
+def add_user(user_id, user_name):
     data = {
         "userId": user_id,
+        "username": user_name,
         "cart": {},
         "isAdmin": False
     }
@@ -120,6 +123,12 @@ def add_user(user_id):
 
 def add_admin(user_id):
     return users.update_one({"userId": user_id}, {"$set": {"isAdmin": True}})
+
+def check_already_user(user_id):
+    return bool(users.find_one({"userId": user_id}))
+
+def check_admin(user_id):
+    return users.find_one({"userId": user_id}, {'isAdmin': True})
 
 def add_application(user_id, firstname, order_prod, indicated_time, order_time, username='', lastname=''):
     data = {
@@ -144,13 +153,14 @@ def add_product(label, amount, about, picture):
     return products.insert_one(data).inserted_id
 
 def get_products(page_size, offset):
-    return products.find({}).limit(page_size).skip(offset).sort("label")
+    all_products = list(products.find({}).limit(page_size).skip(offset).sort("type"))
+    return all_products
 
 def get_product_by_id(prod_id):
     return products.find_one({"_id": ObjectId(prod_id)})
 
 def del_product(prod_id):
-    products.delete_one({"_id": ObjectId(prod_id)})
+    return products.delete_one({"_id": ObjectId(prod_id)})
 
 
 def add_product_to_cart(user_id, prod_id):
@@ -164,17 +174,14 @@ def del_product_in_cart(user_id, prod_id):
 
 def get_products_from_cart(user_id):
     text = ''
-    get_cart = users.find_one({"userId": user_id}, {'cart'})
-    # len_cart = len(get_cart)
-    for i, number in db.get_products_from_cart(user_id):
-        prod_and_amount_by_cart = get_cart['cart'][i]
-        prod_and_amount_by_cart_str = re.findall(r'\w+', str(prod_and_amount_by_cart))
-        prod_id = prod_and_amount_by_cart_str[0]
-        amount = prod_and_amount_by_cart_str[1]
-        get_label = products.find_one({'_id': ObjectId(prod_id)}, {'label'})
-        label = get_label['label']
-        text += '_{}\t{}\t x {}_\n'.format(label, amount/100.0, number)
+    cart = users.find_one({"userId": user_id}, {'cart'})['cart']
+    for key in sorted(cart.keys()):
+        products_in_cart = products.find_one({'_id': ObjectId(key)})
+        amount = products_in_cart['amount']
+        label = products_in_cart['label']
+        number = cart[key]
+        text += f'_{label}\t {amount/100.0}\t x {number} шт_\t Усього:{int(amount)*int(number)/100.0} грн.\n'
     return text
 
 def clear_cart(user_id):
-    return users.update_one({"userId": user_id}, {"$set": {"cart": []}})
+    return users.update_one({"userId": user_id}, {"$set": {"cart": {}}})

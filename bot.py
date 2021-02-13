@@ -1,319 +1,185 @@
-from dotenv import load_dotenv
-load_dotenv()
+# def add_to_cart(query):
+#     data = json.loads(query.data)
+#     prod_id = data.get('pid')
+#     user_id = query.message.chat.id
+#     if prod_id is not None:
+#         db.add_product_to_cart(user_id, prod_id)
+#         return prod_id
+
+
+# @bot.callback_query_handler(func=order_pressed)
+# def add_order_callback(query):
+#     try:
+#         message_id = query.message.message_id
+#         prod_id = add_to_cart(query)
+#         offset = json.loads(query.data).get('offset')
+#         text = 'Ваш кошик: \n' + db.get_products_from_cart(query.message.chat.id)
+#         bot.edit_message_text(  message_id=message_id, text=text, chat_id=query.message.chat.id,
+#                                 reply_markup=make_order_keyboard(3, offset), parse_mode='Markdown')
+#         label, amount, about, url = db.get_product_by_id(prod_id)
+#         bot.answer_callback_query(
+#             callback_query_id=query.id, text='Ви додали товар {} до кошика'.format(label))
+#     except:
+#         pass
+
+
+# @bot.callback_query_handler(func=clear_pressed)
+# def clear_callback(query):
+#     try:
+#         message_id = query.message.message_id
+#         chat_id = query.message.chat.id
+#         offset = json.loads(query.data).get('offset')
+#         db.clear_cart(chat_id)
+#         text = 'Ваш кошик: \n' + db.get_products_from_cart(chat_id)
+#         bot.edit_message_text(  message_id=message_id, text=text, chat_id=chat_id,
+#                                 parse_mode='Markdown', reply_markup=make_order_keyboard(3, offset)
+#         )
+#         bot.answer_callback_query(
+#             callback_query_id=query.id, text='Ви видалили кошик'
+#         )
+#     except:
+#         bot.answer_callback_query(
+#             callback_query_id=query.id, text='Ваш кошик порожній'
+#         )
+#         return
+# @bot.pre_checkout_query_handler(func=lambda query: True)
+# def check_out(pcq):
+#     bot.answer_pre_checkout_query(
+#         pre_checkout_query_id=pcq.id, ok=True, error_message='Сталася помилка')
+
+
+
+import logging
+import asyncio
 import os
-from telebot import TeleBot, types
-import json
-import re
-import database as db
-from flask import Flask, request, make_response
-
-app = Flask(__name__)
-
-bot = TeleBot(os.environ['TOKEN'])
-
-
-@bot.message_handler(commands=['start'])
-def initialization(message):
-    user_id = message.chat.id
-    user_name = message.from_user.first_name
-    text = 'Вітаю {}, ви зареєструвалися, можете перейти до покупок командою /order'.format(
-        user_name)
-    bot.send_message(user_id, text)
-    db.add_user(user_id)
-
-@bot.message_handler(commands=['isAdmin{}'.format(os.environ['SECRET_ADMIN'])])
-def upd_admin(message):
-    user_id = message.chat.id
-    text = 'Вітаю, ви адмін'
-    bot.send_message(user_id, text)
-    db.add_admin(user_id)
+from aiogram import Bot, Dispatcher, executor, types
+from aiogram.utils.exceptions import BotBlocked
+import aiogram.utils.markdown as fmt
+from aiogram.dispatcher.filters import Text
+from random import randint
+from aiogram.utils.exceptions import MessageNotModified
+from contextlib import suppress
+from aiogram.utils.callback_data import CallbackData
+from aiogram.types import BotCommand
+from app.settings import BOT_TOKEN
 
 
-@bot.message_handler(commands=['setdescription'])
-def set_description(message):
-    user_id = message.chat.id
-    text = 'Бот для онлайн кафе'
-    bot.send_message(user_id, text)
+bot = Bot(token=BOT_TOKEN, parse_mode=types.ParseMode.HTML)
+dp = Dispatcher(bot)
+logging.basicConfig(level=logging.INFO)
+
+async def set_commands(bot: Bot):
+    commands = [
+        BotCommand(command="/start", description="Початок роботи"),
+        BotCommand(command="/about", description="Хто створив бота"),
+        BotCommand(command="/description", description="Про що бот")
+    ]
+    await bot.set_my_commands(commands)
+
+@dp.message_handler(Text(equals="С пюрешкой"))
+async def with_puree(message: types.Message):
+    await message.reply("Отличный выбор!")
+    await message.reply("Отличный выбор!", reply_markup=types.ReplyKeyboardRemove())
 
 
-@bot.message_handler(commands=['setabout'])
-def set_about(message):
-    user_id = message.chat.id
-    text = 'Робота Олійника Рената'
-    bot.send_message(user_id, text)
+@dp.message_handler(lambda message: message.text == "Без пюрешки")
+async def without_puree(message: types.Message):
+    await message.reply("Так невкусно!")
+
+@dp.message_handler(commands="test1")
+async def cmd_test1(message: types.Message):
+    await message.answer(
+        f"{fmt.hide_link('https://telegram.org/blog/video-calls/ru')}Кто бы мог подумать, что "
+        "в 2020 году в Telegram появятся видеозвонки!\n\nОбычные голосовые вызовы "
+        "возникли в Telegram лишь в 2017, заметно позже своих конкурентов. А спустя три года, "
+        "когда огромное количество людей на планете приучились работать из дома из-за эпидемии "
+        "коронавируса, команда Павла Дурова не растерялась и сделала качественные "
+        "видеозвонки на WebRTC!\n\nP.S. а ещё ходят слухи про демонстрацию своего экрана :)")
 
 
-@bot.message_handler(commands=['order'])
-def order(message):
-    user_id = message.chat.id
-    cart_text = db.get_products_from_cart(user_id)
-    text = "Ваш кошик: \n"
-    if len(cart_text) != 0:
-        text += cart_text
-    markup = make_order_keyboard(3, 0)
-    bot.send_message(user_id, text, reply_markup=markup, parse_mode='Markdown')
+async def cmd_test2(message: types.Message):
+    user_id = message.from_user.id
+    url = 'https://static9.depositphotos.com/1594308/1110/i/600/depositphotos_11107478-stock-photo-fantasy.jpg'
+    await bot.send_photo(chat_id=user_id, photo=url, parse_mode='Markdown')
+dp.register_message_handler(cmd_test2, commands="test2")
+
+@dp.message_handler(commands="block")
+async def cmd_block(message: types.Message):
+    await asyncio.sleep(10.0)
+    await message.reply("Вы заблокированы")
+
+@dp.errors_handler(exception=BotBlocked)
+async def error_bot_blocked(update: types.Update, exception: BotBlocked):
+    # Здесь можно как-то обработать блокировку, например, удалить пользователя из БД
+    print(f"Меня заблокировал пользователь!\nСообщение: {update}\nОшибка: {exception}")
+    return True
+
+@dp.message_handler(commands="random")
+async def cmd_random(message: types.Message):
+    keyboard = types.InlineKeyboardMarkup()
+    keyboard.add(types.InlineKeyboardButton(text="Нажми меня", callback_data="random_value"))
+    await message.answer("Нажмите на кнопку, чтобы бот отправил число от 1 до 10", reply_markup=keyboard)
+
+@dp.callback_query_handler(text="random_value")
+async def send_random_value(call: types.CallbackQuery):
+    await call.message.answer(str(randint(1, 10)))
+    await call.answer()
+
+    # Здесь хранятся пользовательские данные.
+# Т.к. это словарь в памяти, то при перезапуске он очистится
+user_data = {}
+
+# fabnum - префикс, action - название аргумента, которым будем передавать значение
+callback_numbers = CallbackData("fabnum", "action")
 
 
-# def make_cart_text(user_id):
-#     text = ""
-#     for id, number in db.get_products_from_cart(user_id):
-#         prod_inf = db.get_product_by_id(id)
-#         label, amount, about, url = prod_inf[0]
-#         text += '_{}\t{}\t x {}_\n'.format(label, amount/100.0, number)
-#     return text
+def get_keyboard_fab():
+    buttons = [
+        types.InlineKeyboardButton(text="-1", callback_data=callback_numbers.new(action="decr")),
+        types.InlineKeyboardButton(text="+1", callback_data=callback_numbers.new(action="incr")),
+        types.InlineKeyboardButton(text="Подтвердить", callback_data=callback_numbers.new(action="finish"))
+    ]
+    keyboard = types.InlineKeyboardMarkup(row_width=2)
+    keyboard.add(*buttons)
+    return keyboard
 
 
-def swipe_presed(query):
-    data = json.loads(query.data)
-    return data.get('offset') is not None \
-        and data.get('pid') is None \
-        and data.get('inf') is None \
-        and data.get('abt') is None
+async def update_num_text_fab(message: types.Message, new_value: int):
+    with suppress(MessageNotModified):
+        await message.edit_text(f"Укажите число: {new_value}", reply_markup=get_keyboard_fab())
 
 
-@bot.callback_query_handler(func=swipe_presed)
-def swipe_page(query):
-    try:
-        data = json.loads(query.data)
-        user_id = query.message.chat.id
-        message_id = query.message.message_id
-        print(data)
-        offset = data.get('offset')
-        print(offset is not None)
-        if offset is not None:
-            if offset == 'first_page':
-                bot.answer_callback_query(
-                    callback_query_id=query.id, text='Це перша сторінка')
-                return
-            elif offset == 'last_page':
-                bot.answer_callback_query(
-                    callback_query_id=query.id, text='Це остання сторінка')
-                return
-            else:
-                keyboard = make_order_keyboard(3, offset)
-                cart_text = make_cart_text(user_id)
-                text = "Ваш кошик: \n"
-                if len(cart_text) != 0:
-                    text += cart_text
-                try:
-                    bot.edit_message_text(
-                        text=text, chat_id=user_id, parse_mode='Markdown', reply_markup=keyboard, message_id=message_id)
-                except:
-                    bot.delete_message(
-                        chat_id=user_id, message_id=message_id)
-                    bot.send_message(
-                        text=text, chat_id=user_id, parse_mode='Markdown', reply_markup=keyboard)
-    except:
-        pass
+@dp.message_handler(commands="numbers_fab")
+async def cmd_numbers(message: types.Message):
+    user_data[message.from_user.id] = 0
+    await message.answer("Укажите число: 0", reply_markup=get_keyboard_fab())
 
 
-def make_order_keyboard(page_size, offset):
-    markup = types.InlineKeyboardMarkup(row_width=2)
-    for product in db.get_products(page_size, offset):
-        prod_id, label, amount = product
-        prod_data = json.dumps({'pid': prod_id, 'offset': offset})
-        about_data = json.dumps({'abt': prod_id, 'offset': offset})
-        prod_row = []
-        prod_row.append(types.InlineKeyboardButton(
-            text=label+' '+str(amount/100), callback_data=prod_data))
-        prod_row.append(types.InlineKeyboardButton(
-            text='Детальніше', callback_data=about_data))
-        markup.add(*prod_row)
-
-    markup.add(types.InlineKeyboardButton(  text='Видалити зміст кошика',
-                                            callback_data=json.dumps({'inf': 'clear', 'offset': offset})))
-    markup.add(types.InlineKeyboardButton(  text='Купити',
-                                            callback_data=json.dumps({'inf': 'buy'})))
-    if offset == 0:
-        markup.add(types.InlineKeyboardButton(
-            text='<==', callback_data=json.dumps({'offset': 'first_page'})))
-    else:
-        markup.add(types.InlineKeyboardButton(
-            text='<==', callback_data=json.dumps({'offset': offset-3})))
-    if len(db.get_products(page_size, offset + 3)) == 0:
-        markup.add(types.InlineKeyboardButton(
-            text='==>', callback_data=json.dumps({'offset': 'last_page'})))
-    else:
-        markup.add(types.InlineKeyboardButton(
-            text='==>', callback_data=json.dumps({'offset': offset+3})))
-    return markup
+@dp.callback_query_handler(callback_numbers.filter(action=["incr", "decr"]))
+async def callbacks_num_change_fab(call: types.CallbackQuery, callback_data: dict):
+    user_value = user_data.get(call.from_user.id, 0)
+    action = callback_data["action"]
+    if action == "incr":
+        user_data[call.from_user.id] = user_value + 1
+        await update_num_text_fab(call.message, user_value + 1)
+    elif action == "decr":
+        user_data[call.from_user.id] = user_value - 1
+        await update_num_text_fab(call.message, user_value - 1)
+    await call.answer()
 
 
-@bot.message_handler(regexp='addproduct '+r". \w+")
-def add_new_product(message):
-    new_prod = message.text
-    user_id = message.chat.id
-    product = re.split(r"\. |\.\.\. ", new_prod),
-    label = product[0][1]
-    amount = int(product[0][2])
-    about = product[0][3]
-    picture = product[0][4]
-    db.add_product(label, amount, about, picture)
-    text = "Товар {} додано у магазин".format(label)
-    bot.send_message(user_id, text)
-
-@bot.message_handler(regexp='delproduct'+r". \w+")
-def del_product(message):
-    prod = message.text
-    user_id = message.chat.id
-    product = re.split(r"\. |\.\.\. ", prod),
-    product_id = product[0][1]
-    db.del_product(product_id)
-    text = "Товар {} видалено із магазину".format(product_id)
-    bot.send_message(user_id, text)
-
-def clear_pressed(query):
-    data = json.loads(query.data)
-    return data.get('inf') == 'clear'
-
-
-def order_pressed(query):
-    data = json.loads(query.data)
-    return data.get('pid') is not None
-
-
-def about_pressed(query):
-    data = json.loads(query.data)
-    return data.get('abt') is not None
-
-
-def buy_pressed(query):
-    data = json.loads(query.data)
-    return data.get('inf') == 'buy'
-
-
-@bot.callback_query_handler(func=about_pressed)
-def send_info_about(query):
-    try:
-        data = json.loads(query.data)
-        user_id = query.message.chat.id
-        message_id = query.message.message_id
-        prod_id = data.get('abt')
-        offset = data.get('offset')
-        label, amount, about, url = db.get_product_by_id(prod_id)[0]
-        caption = "*{} - {}*\n_{}_".format(label, amount / 100.0, about)
-        markup = types.InlineKeyboardMarkup()
-        markup.add(types.InlineKeyboardButton(text='Повернутися',
-                                              callback_data=json.dumps({'offset': offset})))
-        bot.delete_message(chat_id=user_id, message_id=message_id)
-        bot.send_photo(chat_id=user_id, photo=url, caption=caption,
-                       parse_mode='Markdown', reply_markup=markup)
-    except:
-        bot.answer_callback_query(query.id, text='Повідомлення застаріле')
-
-
-def add_to_cart(query):
-    data = json.loads(query.data)
-    prod_id = data.get('pid')
-    user_id = query.message.chat.id
-    if prod_id is not None:
-        db.add_product_to_cart(user_id, prod_id)
-        return prod_id
-
-
-@bot.callback_query_handler(func=order_pressed)
-def add_order_callback(query):
-    try:
-        message_id = query.message.message_id
-        prod_id = add_to_cart(query)
-        offset = json.loads(query.data).get('offset')
-        text = 'Ваш кошик: \n' + db.get_products_from_cart(query.message.chat.id)
-        bot.edit_message_text(  message_id=message_id, text=text, chat_id=query.message.chat.id,
-                                reply_markup=make_order_keyboard(3, offset), parse_mode='Markdown')
-        label, amount, about, url = db.get_product_by_id(prod_id)
-        bot.answer_callback_query(
-            callback_query_id=query.id, text='Ви додали товар {} до кошика'.format(label))
-    except:
-        pass
-
-
-@bot.callback_query_handler(func=clear_pressed)
-def clear_callback(query):
-    try:
-        message_id = query.message.message_id
-        chat_id = query.message.chat.id
-        offset = json.loads(query.data).get('offset')
-        db.clear_cart(chat_id)
-        text = 'Ваш кошик: \n' + db.get_products_from_cart(chat_id)
-        bot.edit_message_text(  message_id=message_id, text=text, chat_id=chat_id,
-                                parse_mode='Markdown', reply_markup=make_order_keyboard(3, offset)
-        )
-        bot.answer_callback_query(
-            callback_query_id=query.id, text='Ви видалили кошик'
-        )
-    except:
-        bot.answer_callback_query(
-            callback_query_id=query.id, text='Ваш кошик порожній'
-        )
-        return
-
-
-@bot.callback_query_handler(func=buy_pressed)
-def send_buy(query):
-    order_list = []
-    for prod_id, number in db.get_products_from_cart(query.message.chat.id):
-        label, amount, about, url = db.get_product_by_id(prod_id)[0]
-        for i in range(0, number):
-            order_list.append(types.LabeledPrice(label=label, amount=amount))
-    if len(order_list) == 0:
-        bot.answer_callback_query(
-            callback_query_id=query.id, text='У вас порожній кошик')
-        return
-    if len(order_list) > 10:
-        bot.answer_callback_query(
-            callback_query_id=query.id, text='У вас не має бути більше 10 товарів'
-        )
-        return
-    bot.send_invoice(   chat_id=query.message.chat.id, title="Чек покупок",
-                        description='Ваш чек',
-                        provider_token=os.environ['PAYMENT_TOKEN'],
-                        start_parameter='params',
-                        currency='UAH',
-                        prices=order_list,
-                        invoice_payload='Good'
-    )
-    bot.delete_message( chat_id=query.message.chat.id,
-                        message_id=query.message.message_id)
-
-
-@bot.pre_checkout_query_handler(func=lambda query: True)
-def check_out(pcq):
-    bot.answer_pre_checkout_query(
-        pre_checkout_query_id=pcq.id, ok=True, error_message='Сталася помилка')
-
-
-# @bot.message_handler(content_types=['successful_payment'])
-# def payment_ok(message):
-#     # если проект реализуется в реальной жизни, то в этом месте  оплаченый заказ добавляется
-#     # в систему обработки заказов и выполняется оператором кассы
-#     chat_id = message.chat.id
-#     amount = message.successful_payment.total_amount / 100.0
-#     currency = message.successful_payment.currency
-#     bot.send_message(
-#         chat_id=chat_id, text='Дякуємо за покупку. Ваша сума {} {}'.format(amount, currency))
-
-
-# @app.route('/webhook', methods=['POST'])
-# def hadle_messages():
-#     bot.process_new_updates(
-#         [types.Update.de_json(request.stream.read().decode("utf-8"))])
-#     return 'ok', 200
-
-
-# @app.route('/setwh')
-# def webhook():
-#     bot.remove_webhook()
-#     bot.set_webhook(url='https://renattopbot.herokuapp.com/webhook')
-#     return 'ok', 200
-
-
-# @app.route('/')
-# def index():
-#     return "Renat APP"
-
-
-# if __name__ == "__main__":
-#     app.run()
+@dp.callback_query_handler(callback_numbers.filter(action=["finish"]))
+async def callbacks_num_finish_fab(call: types.CallbackQuery):
+    user_value = user_data.get(call.from_user.id, 0)
+    await call.message.edit_text(f"Итого: {user_value}")
+    await call.answer()
 
 if __name__ == "__main__":
-    bot.infinity_polling()
+    from app.handlers import user, info, products
+    dp.register_message_handler(user.initialization, commands=['start'])
+    dp.register_message_handler(info.description, commands=['description'])
+    dp.register_message_handler(info.about, commands=['about'])
+    dp.register_message_handler(user.is_admin, regexp='isAdmin'+r" \w{10,100}")
+    dp.register_message_handler(products.add_product, regexp='addproduct |'+r" \|\w{20,5000}")
+    set_commands(bot)
+    executor.start_polling(dp, skip_updates=True)
