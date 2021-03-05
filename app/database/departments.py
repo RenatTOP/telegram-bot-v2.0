@@ -17,7 +17,7 @@ def add_department(
 
 
 def edit_depart(_id: str, edit_field: str, edit_value):
-    return departments.update_one({"_id": _id}, {"$set": {edit_field: edit_value}})
+    return departments.update_one({"_id": ObjectId(_id)}, {"$set": {edit_field: edit_value}})
 
 
 def del_department(_id: str):

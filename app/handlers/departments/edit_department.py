@@ -12,6 +12,8 @@ from app.handlers.departments.depart_helper import string_week
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from app.middlewares.helpers import call_chat_and_message
 import re
+from app.states.department import Edit_Department
+from do import start
 
 
 async def department_list(message: Message):
@@ -87,10 +89,12 @@ async def del_depart(call: CallbackQuery):
     )
 
 
-async def edit_depart(call: CallbackQuery):
+async def edit_depart(call: CallbackQuery, state=FSMContext):
     chat_id, message_id = await call_chat_and_message(call)
     depart = call["data"]
     depart_id = depart.split("depart_edit:", 1)[1]
+    await state.finish()
+    await state.update_data(_id=depart_id)
     text = "Оберіть що треба редагувати"
     edit_depart = InlineKeyboardMarkup(
         inline_keyboard=[
@@ -98,13 +102,13 @@ async def edit_depart(call: CallbackQuery):
                 InlineKeyboardButton(
                     text="Назва",
                     callback_data=cd.depart_edit_edit_callback.new(
-                        field="name", _id=f"({depart_id}"
+                        field="name"
                     ),
                 ),
                 InlineKeyboardButton(
                     text="Область",
                     callback_data=cd.depart_edit_edit_callback.new(
-                        field="region", _id=f"({depart_id}"
+                        field="region"
                     ),
                 ),
             ],
@@ -112,13 +116,13 @@ async def edit_depart(call: CallbackQuery):
                 InlineKeyboardButton(
                     text="Телефон",
                     callback_data=cd.depart_edit_edit_callback.new(
-                        field="phone", _id=f"({depart_id}"
+                        field="phone"
                     ),
                 ),
                 InlineKeyboardButton(
                     text="Місто",
                     callback_data=cd.depart_edit_edit_callback.new(
-                        field="city", _id=f"({depart_id}"
+                        field="city"
                     ),
                 ),
             ],
@@ -126,13 +130,13 @@ async def edit_depart(call: CallbackQuery):
                 InlineKeyboardButton(
                     text="Розклад",
                     callback_data=cd.depart_edit_edit_callback.new(
-                        field="timetable", _id=f"({depart_id}"
+                        field="timetable"
                     ),
                 ),
                 InlineKeyboardButton(
                     text="Адреса",
                     callback_data=cd.depart_edit_edit_callback.new(
-                        field="address", _id=f"({depart_id}"
+                        field="address"
                     ),
                 ),
             ],
@@ -146,36 +150,83 @@ async def edit_depart(call: CallbackQuery):
 async def edit_field(call: CallbackQuery):
     chat_id, message_id = await call_chat_and_message(call)
     depart = call["data"]
-    depart_id = depart.split("(", 1)[1]
     if re.search(r"name", depart):
+        await Edit_Department.first()
         text = "Введіть нову назву закладу"
-        await bot.answer_callback_query(call.id, text="Зміни прийняті")
-        await call.message.answer(text)
+        await bot.edit_message_text(
+        chat_id=chat_id, message_id=message_id, text=text, reply_markup=None
+    )
 
     elif re.search(r"region", depart):
+        await Edit_Department.edit_region.set()
         text = "Введіть нову область закладу"
-        await bot.answer_callback_query(call.id, text="Зміни прийняті")
-        await call.message.answer(text)
+        await bot.edit_message_text(
+        chat_id=chat_id, message_id=message_id, text=text, reply_markup=None
+    )
 
     elif re.search(r"city", depart):
+        await Edit_Department.edit_city.set()
         text = "Введіть нове місто закладу"
-        await bot.answer_callback_query(call.id, text="Зміни прийняті")
-        await call.message.answer(text)
+        await bot.edit_message_text(
+        chat_id=chat_id, message_id=message_id, text=text, reply_markup=None
+    )
 
     elif re.search(r"address", depart):
+        await Edit_Department.edit_address.set()
         text = "Введіть нову адресу закладу"
-        await bot.answer_callback_query(call.id, text="Зміни прийняті")
-        await call.message.answer(text)
+        await bot.edit_message_text(
+        chat_id=chat_id, message_id=message_id, text=text, reply_markup=None
+    )
 
     elif re.search(r"phone", depart):
+        await Edit_Department.edit_phone.set()
         text = "Введіть новий телефон закладу"
-        await bot.answer_callback_query(call.id, text="Зміни прийняті")
-        await call.message.answer(text)
+        await bot.edit_message_text(
+        chat_id=chat_id, message_id=message_id, text=text, reply_markup=None
+    )
 
     elif re.search(r"timetable", depart):
+        await Edit_Department.edit_timetable.set()
         text = "Введіть новий графік робіт закладу"
-        await bot.answer_callback_query(call.id, text="Зміни прийняті")
-        await call.message.answer(text)
+        await bot.edit_message_text(
+        chat_id=chat_id, message_id=message_id, text=text, reply_markup=None
+    )
+
+
+async def confirm_change(message: Message, state: FSMContext):
+    my_state = await state.get_state()
+    data = await state.get_data()
+    _id = data["_id"]
+    value = message.text
+    text = "Зміни прийняті"
+    if my_state == "Edit_Department:edit_name":
+        await state.finish()
+        await message.answer(text=text)
+
+    elif my_state == "Edit_Department:edit_region":
+        depart_db.edit_depart(_id, 'region', value)
+        await state.finish()
+        await message.answer(text=text)
+
+    elif my_state == "Edit_Department:edit_city":
+        depart_db.edit_depart(_id, 'city', value)
+        await state.finish()
+        await message.answer(text=text)
+
+    elif my_state == "Edit_Department:edit_address":
+        depart_db.edit_depart(_id, 'address', value)
+        await state.finish()
+        await message.answer(text=text)
+
+    elif my_state == "Edit_Department:edit_phone":
+        depart_db.edit_depart(_id, 'phone', value)
+        await state.finish()
+        await message.answer(text=text)
+
+    elif my_state == "Edit_Department:edit_timetable":
+        depart_db.edit_depart(_id, 'timetable', value)
+        await state.finish()
+        await message.answer(text=text)
 
 
 def register_handlers_edit_department(dp: Dispatcher):
@@ -189,4 +240,15 @@ def register_handlers_edit_department(dp: Dispatcher):
     )
     dp.register_callback_query_handler(
         edit_field, cd.depart_edit_edit_callback.filter()
+    )
+    dp.register_message_handler(
+        confirm_change,
+        state=[
+            Edit_Department.edit_name,
+            Edit_Department.edit_region,
+            Edit_Department.edit_city,
+            Edit_Department.edit_address,
+            Edit_Department.edit_phone,
+            Edit_Department.edit_timetable,
+        ],
     )
