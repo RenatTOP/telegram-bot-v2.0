@@ -9,8 +9,8 @@ def check_already_user(user_id: int):
     already_user = users.find_one({'userId': user_id})
     return bool(already_user)
 
-def check_is_admin(user_id: int):
-    is_admin = users.find_one({'userId': user_id}, {'isAdmin': True})
+async def check_is_admin(user_id: int):
+    is_admin = await users.find_one({'userId': user_id}, {'isAdmin': True})
     return bool(is_admin['isAdmin'])
 
 def find_product(label: str):

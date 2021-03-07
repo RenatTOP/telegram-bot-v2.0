@@ -4,7 +4,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from app.settings import DATABASE
 
 
-client = MongoClient(DATABASE)
+client = AsyncIOMotorClient(DATABASE)
 
 db = client.bot
 

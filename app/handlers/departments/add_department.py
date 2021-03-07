@@ -1,17 +1,17 @@
-from aiogram import Dispatcher
-from aiogram.types import Message, CallbackQuery
-from aiogram.dispatcher.filters import RegexpCommandsFilter
-import app.database.departments as depart_db
-from aiogram.dispatcher import FSMContext
-from app.middlewares.checks import check_is_admin
-from app.keyboards.inline import department_buttons as kb
-import app.middlewares.helpers
-import logging
-from app.keyboards.inline import callback_datas as cd
 from bot import bot
+from aiogram import Dispatcher
+import app.middlewares.helpers
+from aiogram.dispatcher import FSMContext
 from app.states.department import Department
+import app.database.departments as depart_db
+from aiogram.types import Message, CallbackQuery
+from app.middlewares.checks import check_is_admin
 from app.handlers.departments.depart_helper import *
+from app.keyboards.inline import callback_datas as cd
 from app.middlewares.helpers import call_chat_and_message
+from app.keyboards.inline import department_buttons as kb
+from aiogram.dispatcher.filters import RegexpCommandsFilter
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
 async def add_department(call: CallbackQuery, state: FSMContext):
@@ -164,8 +164,8 @@ async def depart_timetable(message: Message, state: FSMContext):
             await state.update_data(timetable=timetable)
             depart_data = await state.get_data()
             await Department.next()
-            week = await string_week(timetable)
-            text = await string_confirm(depart_data, week)
+        week = await string_week(timetable)
+        text = await string_confirm(depart_data, week)
         await message.answer(text, reply_markup=kb.confinm_depart)
     except:
         await message.answer(
@@ -186,10 +186,13 @@ async def confirm_department(call: CallbackQuery, state: FSMContext):
         address = depart_data["address"]
         phone = depart_data["phone"]
         timetable = depart_data["timetable"]
-        depart_db.add_department(name, region, city, address, phone, timetable)
+        await depart_db.add_department(name, region, city, address, phone, timetable)
+        edit_depart = InlineKeyboardMarkup()
+        edit_depart.insert(await kb.back("depart_list"))
         await call.message.edit_reply_markup(reply_markup=None)
-        await call.message.answer(f"Заклад {name} було додано")
+        await call.message.answer(f"Заклад \"{name}\" було додано", reply_markup=edit_depart)
         await state.finish()
+
     elif call["data"] == "depart_confirm:No":
         text = "Оберіть що треба редагувати:"
         await bot.edit_message_text(
