@@ -1,17 +1,28 @@
+from bson.objectid import ObjectId
 from app.database.database import kinds
 from app.database.database import products
 
 
-def add_kind(name: str):
+async def add_kind(name: str):
     data = {"name": name}
-    return kinds.insert_one(data).inserted_id
+    return await kinds.insert_one(data)
 
 
-def paste_kind(name: str):
-    return products.update_many({"kind": ""}, {"$set": {"kind": name}})
-
-
-def del_kind(name: str):
-    products.update_many({"kind": name}, {"$set": {"kind": ""}})
-    kinds.delete_one({"name": name})
+async def edit_kind(_id: str, name: str):
+    await products.update_many({"kind": ""}, {"$set": {"kind": name}})
+    await kinds.update_one({"_id": _id}, {"$set": {"name": name}})
     return
+
+
+async def del_kind(_id: str):
+    name = await kinds.find_one({"_id": ObjectId(_id)}, {"name"})
+    await products.update_many({"kind": name['name']}, {"$set": {"kind": ""}})
+    return await kinds.delete_one({"_id": ObjectId(_id)})
+
+
+async def get_kind_by_id(_id: str):
+    return await kinds.find_one({"_id": ObjectId(_id)})
+
+
+async def find_kinds():
+    return kinds.find({}, {"name"}).sort("name")

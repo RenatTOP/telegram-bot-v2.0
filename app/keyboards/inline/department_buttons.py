@@ -1,6 +1,6 @@
-from app.database.departments import edit_depart
 import app.keyboards.inline.callback_datas as cd
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from app.keyboards.inline import helper_buttons as help_kb
 
 # ?menu Department buttons
 
@@ -19,7 +19,7 @@ menu_depart = InlineKeyboardMarkup(
         [
             InlineKeyboardButton(
                 text="⬅ Повернутися",
-                callback_data=cd.depart_menu_callback.new(value="back"),
+                callback_data=cd.button_back_callback.new(value="admin_menu"),
             )
         ],
     ]
@@ -110,7 +110,7 @@ add_edit_depart = InlineKeyboardMarkup(
 # ?edit Department buttons
 
 async def departments_list(departments: list):
-    depart_list = InlineKeyboardMarkup(row_width=1)
+    depart_list = InlineKeyboardMarkup(row_width=2)
     async for depart in departments:
         _id = depart["_id"]
         name = depart["name"]
@@ -122,13 +122,12 @@ async def departments_list(departments: list):
                 callback_data=cd.depart_info_callback.new(_id=f"{_id}"),
             )
         )
-    depart_list.insert(await back("departments"))
+    depart_list.add(await help_kb.back("departments"))
     return depart_list
 
 
 async def info_department(depart_id: str):
     info_depart = InlineKeyboardMarkup(
-        row_width=2,
         inline_keyboard=[
             [
                 InlineKeyboardButton(
@@ -144,7 +143,7 @@ async def info_department(depart_id: str):
             ]
         ]
     )
-    info_depart.insert(await back("depart_list"))
+    info_depart.add(await help_kb.back("depart_list"))
     return info_depart
 
 
@@ -202,13 +201,3 @@ edit_fields = InlineKeyboardMarkup(
         ],
     ]
 )
-
-# ?other Department buttons
-
-
-async def back(value: str):
-    back = InlineKeyboardButton(
-        text="⬅ Повернутися",
-        callback_data=cd.depart_button_back_callback.new(value=f"{value}"),
-    )
-    return back

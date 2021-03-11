@@ -10,7 +10,7 @@ from app.handlers.departments.depart_helper import *
 from app.keyboards.inline import callback_datas as cd
 from app.middlewares.helpers import call_chat_and_message
 from app.keyboards.inline import department_buttons as kb
-from aiogram.dispatcher.filters import RegexpCommandsFilter
+from app.keyboards.inline import helper_buttons as help_kb
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
@@ -188,7 +188,7 @@ async def confirm_department(call: CallbackQuery, state: FSMContext):
         timetable = depart_data["timetable"]
         await depart_db.add_department(name, region, city, address, phone, timetable)
         edit_depart = InlineKeyboardMarkup()
-        edit_depart.insert(await kb.back("depart_list"))
+        edit_depart.add(await help_kb.back("depart_list"))
         await call.message.edit_reply_markup(reply_markup=None)
         await call.message.answer(f"Заклад \"{name}\" було додано", reply_markup=edit_depart)
         await state.finish()

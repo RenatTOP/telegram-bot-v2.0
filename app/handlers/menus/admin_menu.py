@@ -30,5 +30,5 @@ async def admin_menu_call(call: CallbackQuery):
 def register_handlers_admin_menu(dp: Dispatcher):
     dp.register_message_handler(admin_menu, commands=["admin_menu"])
     dp.register_callback_query_handler(
-        admin_menu_call, cd.depart_menu_callback.filter(value="back")
+        admin_menu_call, cd.button_back_callback.filter(value="admin_menu")
     )

@@ -1,8 +1,9 @@
 from app.database.database import products
 from bson.objectid import ObjectId
+from app.keyboards.inline.department_buttons import edit_fields
 
 
-def add_product(label: str, amount: int, kind: str, about: str, picture: str):
+async def add_product(label: str, amount: int, kind: str, about: str, picture: str):
     data = {
         "label": label,
         "amount": amount,
@@ -10,25 +11,25 @@ def add_product(label: str, amount: int, kind: str, about: str, picture: str):
         "about": about,
         "picture": picture,
     }
-    return products.insert_one(data).inserted_id
+    return await products.insert_one(data)
 
 
-def get_products(page_size: int, offset: int):
-    all_products = list(products.find({}).limit(page_size).skip(offset).sort("label"))
+async def get_products(page_size: int, offset: int):
+    all_products = products.find({}).limit(page_size).skip(offset).sort("label")
     return all_products
 
 
-def get_product_by_id(prod_id: str):
-    return products.find_one({"_id": ObjectId(prod_id)})
+async def get_product_by_id(prod_id: str):
+    return await products.find_one({"_id": ObjectId(prod_id)})
 
 
-def edit_product(label: str, edit_field: str, edit_value):
+async def edit_product(_id: str, edit_field: str, edit_value):
     if edit_value.isdigit():
         edit_value = int(edit_value)
     else:
         edit_value = str(edit_value)
-    return products.update_one({"label": label}, {"$set": {edit_field: edit_value}})
+    return await products.update_one({"_id": ObjectId(_id)}, {"$set": {edit_field: edit_value}})
 
 
-def del_product(label: str):
-    return products.delete_one({"label": label})
+async def del_product(_id: str):
+    return await products.delete_one({"_id": ObjectId(_id)})

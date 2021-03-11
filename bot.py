@@ -201,23 +201,24 @@ async def callbacks_num_finish_fab(call: types.CallbackQuery):
 
 
 if __name__ == "__main__":
-    from app.handlers import user, usergeo, info, kinds, products, user_cart, order
-    from app.handlers.departments import departments_handlers as dh
-    from app.handlers.menus import menus_handlers as mh
-    from app.handlers.products import add_product
+    from app.handlers import user, usergeo, info, kinds1, user_cart, order
+    from app.handlers.departments.departments_handlers import register_handlers_department
+    from app.handlers.menus.menus_handlers import register_handlers_admin_menu
+    from app.handlers.products.products_handler import register_handlers_products
+    from app.handlers.kinds.kinds_handler import register_handlers_kinds
 
     user.register_handlers_users(dp)
     usergeo.register_handlers_user_geo(dp)
 
-    mh.register_handlers_admin_menu(dp)
+    register_handlers_admin_menu(dp)
 
-    dh.register_handlers_department(dp)
-
+    register_handlers_department(dp)
+    register_handlers_kinds(dp)
     info.register_handlers_info(dp)
     user_cart.register_handlers_cart(dp)
     order.register_handlers_order(dp)
-    add_product.register_handlers_CRUD_products(dp)
-    kinds.register_handlers_CRUD_kinds(dp)
+    register_handlers_products(dp)
+    kinds1.register_handlers_CRUD_kinds(dp)
     set_commands(bot)
 
     import locale

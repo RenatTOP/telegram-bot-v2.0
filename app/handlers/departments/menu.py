@@ -4,6 +4,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.types import Message, CallbackQuery
 from app.keyboards.inline import callback_datas as cb
 from app.keyboards.inline import department_buttons as kb
+from app.keyboards.inline import helper_buttons as help_kb
 
 
 async def departments(call: CallbackQuery, state: FSMContext):
@@ -47,7 +48,7 @@ def register_handlers_menu_departments(dp: Dispatcher):
         departments, cb.admin_menu_callback.filter(value=["Departments"]), state="*"
     )
     dp.register_callback_query_handler(
-        departments, cb.depart_button_back_callback.filter(value=["departments"]), state="*"
+        departments, cb.button_back_callback.filter(value=["departments"]), state="*"
     )
     dp.register_callback_query_handler(
         ivoices, cb.admin_menu_callback.filter(value=["Invoices"]), state="*"
