@@ -25,3 +25,14 @@ async def check_kind(name: str):
 async def check_department(name: str):
     department = await departments.find_one({'name': name})
     return bool(department)
+
+
+def check_admin(function_to_decorate):
+    async def is_admin(message):
+        admin = await users.find_one({'userId': message.from_user.id}, {'isAdmin': True})
+        if admin['isAdmin']:
+            await function_to_decorate(message)
+        else:
+            message.answer("Ви не адмін!!!")
+            return
+    return is_admin
