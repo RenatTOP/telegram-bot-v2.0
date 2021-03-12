@@ -50,18 +50,13 @@
 
 import logging
 import asyncio
-import os
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.utils.exceptions import BotBlocked
-import aiogram.utils.markdown as fmt
-from aiogram.dispatcher.filters import Text, RegexpCommandsFilter
 from random import randint
 from aiogram.utils.exceptions import MessageNotModified
 from contextlib import suppress
-from aiogram.utils.callback_data import CallbackData
 from aiogram.types import BotCommand
 from app.settings import BOT_TOKEN
-import app.middlewares.keyboards as kb
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 
@@ -91,19 +86,18 @@ if __name__ == "__main__":
     order.register_handlers_order(dp)
     register_handlers_products(dp)
     kinds1.register_handlers_CRUD_kinds(dp)
-    set_commands(bot)
 
     import locale
     import gettext
 
     domain = "helloworld"
-    current_locale = "nb_NO"
+    current_locale = "uk_UA"
     print("Current locale: {}".format(current_locale))
     locale_path = "locale/"
     gnu_translations = gettext.translation(
         domain="helloworld", localedir=locale_path, languages=[current_locale]
     )
     gnu_translations.install()
-    print(_("helloworld"))
+    print(_("helloworld")) # pylint:disable=undefined-variable
 
     executor.start_polling(dp, skip_updates=True)

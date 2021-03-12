@@ -1,5 +1,4 @@
 from aiogram import Dispatcher
-from aiogram import Dispatcher
 from app.handlers.products.add_product import register_handlers_add_product
 from app.handlers.products.edit_products import register_handlers_edit_product
 from app.handlers.products.menu import register_handlers_menu_products

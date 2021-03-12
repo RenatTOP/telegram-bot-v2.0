@@ -1,8 +1,5 @@
 import app.database.kinds as kind_db
-from app.database.database import users
-from app.database.database import kinds
-from app.database.database import products
-from app.database.database import departments
+from app.database.database import users, kinds, products, departments
 
 
 async def check_already_user(user_id: int):
