@@ -1,7 +1,7 @@
 from app.database.database import users
 
 
-def add_user(user_id: int, user_name: str):
+async def add_user(user_id: int, user_name: str):
     data = {
         "userId": user_id,
         "username": user_name,
@@ -9,8 +9,14 @@ def add_user(user_id: int, user_name: str):
         "isAdmin": False,
         "location": {"latitude": 0, "longitude": 0},
     }
-    return users.insert_one(data).inserted_id
+    await users.insert_one(data).inserted_id
 
 
-def add_admin(user_id: int):
-    return users.update_one({"userId": user_id}, {"$set": {"isAdmin": True}})
+async def add_admin(user_id: int):
+    await users.update_one({"userId": user_id}, {"$set": {"isAdmin": True}})
+
+
+async def db_check_admin(user_id: int):
+    return await users.find_one({'userId': user_id}, {'isAdmin': True})
+
+

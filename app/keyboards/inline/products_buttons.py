@@ -128,7 +128,7 @@ async def products_list(products: list):
     return prod_list
 
 
-async def info_product(prod_id: str):
+async def admin_info_product(prod_id: str):
     info_prod = InlineKeyboardMarkup(
         inline_keyboard=[
             [

@@ -6,6 +6,7 @@ import aiogram.dispatcher.filters
 from aiogram.utils.markdown import hlink
 from aiogram.dispatcher import FSMContext
 from app.states.product import Edit_Product
+from app.middlewares.checks import check_admin_or_user
 from app.database import products as prod_db
 from app.middlewares.checks import check_kind
 from aiogram.types import Message, CallbackQuery
@@ -30,7 +31,9 @@ async def product_list(call: CallbackQuery):
     )
 
 
-async def info_prod(call: CallbackQuery):
+@check_admin_or_user
+async def info_prod(call: CallbackQuery, keyboard):
+    print(keyboard)
     chat_id, message_id = await call_chat_and_message(call)
     prod_id = call["data"]
     prod_id = prod_id.split("prod_info_edit:", 1)[1]
@@ -43,7 +46,7 @@ async def info_prod(call: CallbackQuery):
         f'Ціна:<b>{prod_data["amount"]/100.00} грн.</b>,\n'
         f'Опис:<b>{prod_data["about"]}</b> \n'
     )
-    kb_info_prod = await kb.info_product(prod_id)
+    kb_info_prod = await kb.admin_info_product(prod_id)
     await bot.edit_message_text(
         chat_id=chat_id,
         message_id=message_id,

@@ -13,6 +13,7 @@ async def admin_menu(message: Message):
     await message.answer(text="Хай", reply_markup=kb.admin_menu)
 
 
+@check_admin
 async def admin_menu_call(call: CallbackQuery):
     chat_id, message_id = await call_chat_and_message(call)
     await bot.edit_message_text(
