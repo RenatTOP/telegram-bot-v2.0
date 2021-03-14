@@ -149,6 +149,35 @@ async def admin_info_product(prod_id: str):
     return info_prod
 
 
+async def user_info_product(prod_id: str):
+    info_prod = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text="Додати до кошика",
+                    callback_data=cd.prod_button_edit_callback.new(
+                        _id=f"{prod_id}"
+                    ),
+                ),
+                InlineKeyboardButton(
+                    text="Видалити із кошика",
+                    callback_data=cd.prod_button_del_callback.new(_id=f"{prod_id}"),
+                ),
+            ],
+            [
+                InlineKeyboardButton(
+                    text="Оформити кошик",
+                    callback_data=cd.prod_button_edit_callback.new(
+                        _id=f"{prod_id}"
+                    ),
+                ),
+            ]
+        ]
+    )
+    info_prod.add(await help_kb.back("prod_list"))
+    return info_prod
+
+
 async def del_product(prod_id: str):
     del_prod = InlineKeyboardMarkup(
         inline_keyboard=[

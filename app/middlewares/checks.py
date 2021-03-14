@@ -33,6 +33,19 @@ async def check_department(name: str):
     return bool(department)
 
 
+async def check_cart(user_id: int):
+    cart = await users.find_one({"userId": user_id}, {"cart"})["cart"]
+    return bool(cart)
+
+
+async def check_prod_in_cart(user_id: int, prod_id: str):
+    cart = await users.find_one({"userId": user_id}, {"cart"})["cart"]
+    if cart[f"{prod_id}"] == 0:
+        return "Кошик порожній"
+    elif cart[f"{prod_id}"] == 5:
+        return "У кошика забагато цього товару"
+
+
 def check_admin(func):
     @wraps(func)
     async def wrap(*args, **kwargs):
@@ -41,10 +54,11 @@ def check_admin(func):
         if admin['isAdmin']:
             await func(*args, **kwargs)
         else:
+            text = "Ви не адмін!!!"
             if 'message_id' in args[0]:
-                await args[0].answer("Ви не адмін!!!")
+                await args[0].answer(text)
             else:
-                await args[0].message.answer("Ви не адмін!!!")
+                await args[0].message.answer(text)
             return
     return wrap
 

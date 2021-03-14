@@ -58,6 +58,7 @@ from contextlib import suppress
 from aiogram.types import BotCommand
 from app.settings import BOT_TOKEN
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from app.database.database import users
 
 
 loop = asyncio.get_event_loop()
@@ -68,13 +69,14 @@ logging.basicConfig(level=logging.INFO)
 
 
 if __name__ == "__main__":
-    from app.handlers import user, usergeo, info, kinds1, user_cart, order
+    from app.handlers import usergeo, info, kinds1, order
+    from app.handlers.users.users_handler import register_handlers_users
     from app.handlers.departments.departments_handlers import register_handlers_department
     from app.handlers.menus.menus_handlers import register_handlers_admin_menu
     from app.handlers.products.products_handler import register_handlers_products
     from app.handlers.kinds.kinds_handler import register_handlers_kinds
 
-    user.register_handlers_users(dp)
+    register_handlers_users(dp)
     usergeo.register_handlers_user_geo(dp)
 
     register_handlers_admin_menu(dp)
@@ -82,7 +84,6 @@ if __name__ == "__main__":
     register_handlers_department(dp)
     register_handlers_kinds(dp)
     info.register_handlers_info(dp)
-    user_cart.register_handlers_cart(dp)
     order.register_handlers_order(dp)
     register_handlers_products(dp)
     kinds1.register_handlers_CRUD_kinds(dp)

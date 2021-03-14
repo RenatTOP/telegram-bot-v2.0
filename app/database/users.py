@@ -9,7 +9,7 @@ async def add_user(user_id: int, user_name: str):
         "isAdmin": False,
         "location": {"latitude": 0, "longitude": 0},
     }
-    await users.insert_one(data).inserted_id
+    await users.insert_one(data)
 
 
 async def add_admin(user_id: int):

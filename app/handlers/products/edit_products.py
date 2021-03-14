@@ -33,7 +33,6 @@ async def product_list(call: CallbackQuery):
 
 @check_admin_or_user
 async def info_prod(call: CallbackQuery, keyboard):
-    print(keyboard)
     chat_id, message_id = await call_chat_and_message(call)
     prod_id = call["data"]
     prod_id = prod_id.split("prod_info_edit:", 1)[1]
@@ -46,7 +45,8 @@ async def info_prod(call: CallbackQuery, keyboard):
         f'Ціна:<b>{prod_data["amount"]/100.00} грн.</b>,\n'
         f'Опис:<b>{prod_data["about"]}</b> \n'
     )
-    kb_info_prod = await kb.admin_info_product(prod_id)
+
+    kb_info_prod = await kb.admin_info_product(prod_id) if keyboard == "admin" else await kb.user_info_product(prod_id)
     await bot.edit_message_text(
         chat_id=chat_id,
         message_id=message_id,

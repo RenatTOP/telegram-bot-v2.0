@@ -13,7 +13,7 @@ async def initialization(message: Message):
     text = (
         f"Вітаю {user_name}, ви зареєструвалися,"
         " передайте будь-ласка своє місцеположення /mygeo"
-        " для визначення найближчих вдділень"
+        " для визначення найближчих відділень"
     )
     check = await checks.check_already_user(user_id)
     if check:
@@ -34,7 +34,10 @@ async def is_admin(message: Message):
             await message.answer("Ви адмін")
         elif secret_admin[1].strip() == SECRET_ADMIN:
             await user_db.add_admin(user_id)
-            await message.answer("Вітаю, ви тепер адмін")
+            await message.answer(
+                "Вітаю, ви тепер адмін\n"
+                "Видаліть будь-ласка попереднє повідомлення із таємним ключем"
+            )
         else:
             await message.answer("Невірний таємний ключ")
     except:
@@ -45,7 +48,7 @@ async def is_admin(message: Message):
         )
 
 
-def register_handlers_users(dp: Dispatcher):
+def register_handlers_init_users(dp: Dispatcher):
     dp.register_message_handler(initialization, commands=["start"])
     dp.register_message_handler(
         is_admin, RegexpCommandsFilter(regexp_commands=["is_admin .", "is_admin"])
