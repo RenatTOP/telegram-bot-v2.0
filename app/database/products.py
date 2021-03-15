@@ -14,8 +14,13 @@ async def add_product(label: str, amount: int, kind: str, about: str, picture: s
     return await products.insert_one(data)
 
 
-async def get_products(page_size: int, offset: int):
-    all_products = products.find({}).limit(page_size).skip(offset).sort("label")
+async def get_count_products():
+    all_products = await products.count_documents({})
+    return all_products
+
+
+async def get_products(page_size: int, pages: int):
+    all_products = products.find({}).limit(page_size).skip(pages).sort("label")
     return all_products
 
 

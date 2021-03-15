@@ -16,6 +16,7 @@ depart_edit_edit_callback = CallbackData("depart_edit_edit", "field")
 
 
 prod_menu_callback = CallbackData("prod_menu", "value")
+prod_nav_list_callback = CallbackData("nav_prod", "pages")
 prod_confirm_callback = CallbackData("prod_confirm", "value")
 prod_add_edit_callback = CallbackData("prod_add_edit", "field")
 prod_info_callback = CallbackData("prod_info_edit", "_id")
@@ -33,6 +34,6 @@ kind_button_del_callback = CallbackData("kind_del", "_id")
 kind_button_confirm_del_callback = CallbackData("kind_confirm_del", "_id")
 
 
-add_to_cart_button("add_to_cart", "_id")
-del_from_cart_button("del_from_cart", "_id")
-checkout_order("checkout", "data")
+add_to_cart_button = CallbackData("add_to_cart", "_id")
+del_from_cart_button = CallbackData("del_from_cart", "_id")
+checkout_order = CallbackData("checkout", "data")

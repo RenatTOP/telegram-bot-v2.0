@@ -61,3 +61,12 @@ async def clear_cart(call: CallbackQuery):
 
 def register_handlers_cart(dp: Dispatcher):
     dp.register_message_handler(cart, commands=["cart"])
+    dp.register_callback_query_handler(
+        add_prod_to_cart, cd.add_to_cart_button.filter()
+    )
+    dp.register_callback_query_handler(
+        del_prod_from_cart, cd.del_from_cart_button.filter()
+    )
+    dp.register_callback_query_handler(
+        clear_cart, cd.button_back_callback.filter(value="user_menu")
+    )

@@ -72,14 +72,14 @@ if __name__ == "__main__":
     from app.handlers import usergeo, info, kinds1, order
     from app.handlers.users.users_handler import register_handlers_users
     from app.handlers.departments.departments_handlers import register_handlers_department
-    from app.handlers.menus.menus_handlers import register_handlers_admin_menu
+    from app.handlers.menus.menus_handlers import register_handlers_menus
     from app.handlers.products.products_handler import register_handlers_products
     from app.handlers.kinds.kinds_handler import register_handlers_kinds
 
     register_handlers_users(dp)
     usergeo.register_handlers_user_geo(dp)
 
-    register_handlers_admin_menu(dp)
+    register_handlers_menus(dp)
 
     register_handlers_department(dp)
     register_handlers_kinds(dp)
