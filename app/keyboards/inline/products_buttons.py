@@ -155,20 +155,20 @@ async def user_info_product(prod_id: str):
             [
                 InlineKeyboardButton(
                     text="Додати до кошика",
-                    callback_data=cd.prod_button_edit_callback.new(
+                    callback_data=cd.add_to_cart_button.new(
                         _id=f"{prod_id}"
                     ),
                 ),
                 InlineKeyboardButton(
                     text="Видалити із кошика",
-                    callback_data=cd.prod_button_del_callback.new(_id=f"{prod_id}"),
+                    callback_data=cd.del_from_cart_button.new(_id=f"{prod_id}"),
                 ),
             ],
             [
                 InlineKeyboardButton(
                     text="Оформити кошик",
-                    callback_data=cd.prod_button_edit_callback.new(
-                        _id=f"{prod_id}"
+                    callback_data=cd.checkout_order.new(
+                        data="cart"
                     ),
                 ),
             ]

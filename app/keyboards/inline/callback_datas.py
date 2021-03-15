@@ -31,3 +31,8 @@ kind_info_callback = CallbackData("kind_info_edit", "_id")
 kind_button_edit_callback = CallbackData("kind_edit", "_id")
 kind_button_del_callback = CallbackData("kind_del", "_id")
 kind_button_confirm_del_callback = CallbackData("kind_confirm_del", "_id")
+
+
+add_to_cart_button("add_to_cart", "_id")
+del_from_cart_button("del_from_cart", "_id")
+checkout_order("checkout", "data")

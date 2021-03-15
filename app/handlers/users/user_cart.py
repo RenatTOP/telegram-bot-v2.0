@@ -33,7 +33,7 @@ async def del_prod_from_cart(call: CallbackQuery):
     prod = call["data"]
     prod_id = prod.split("del_from_cart:", 1)[1]
     await cart_db.del_product_from_cart(user_id, prod_id)
-    text = "Товар доданий до кошика"
+    text = "Товар видалений із кошика"
     await bot.answer_callback_query(
         callback_query_id=call.id,
         text=text,
