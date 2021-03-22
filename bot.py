@@ -34,7 +34,6 @@ if __name__ == "__main__":
     register_handlers_department(dp)
     register_handlers_kinds(dp)
     info.register_handlers_info(dp)
-    order.register_handlers_order(dp)
     register_handlers_products(dp)
     kinds1.register_handlers_CRUD_kinds(dp)
 
