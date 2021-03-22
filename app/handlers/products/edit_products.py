@@ -210,6 +210,9 @@ def register_handlers_edit_product(dp: Dispatcher):
         product_list, cd.prod_menu_callback.filter(value=["list"])
     )
     dp.register_callback_query_handler(
+            product_list, cd.user_prod_menu_callback.filter(value=["list"])
+        )
+    dp.register_callback_query_handler(
         product_list, cd.prod_nav_list_callback.filter()
     )
     dp.register_callback_query_handler(

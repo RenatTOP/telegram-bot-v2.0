@@ -187,7 +187,7 @@ async def user_info_product(prod_id: str):
             ],
         ]
     )
-    info_prod.add(await help_kb.back("user_prod_list"))
+    info_prod.add(await help_kb.back("prod_list"))
     return info_prod
 
 
