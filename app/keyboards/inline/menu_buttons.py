@@ -34,7 +34,7 @@ user_menu = InlineKeyboardMarkup(
         [
             InlineKeyboardButton(
                 text="Товари",
-                callback_data=cd.admin_menu_callback.new(value="Products"),
+                callback_data=cd.prod_menu_callback.new(value=["list"],
             ),
         ],
         [
