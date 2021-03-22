@@ -5,11 +5,11 @@ from aiogram.types import Message, CallbackQuery
 from app.middlewares.checks import check_admin
 from app.keyboards.inline import callback_datas as cd
 from app.middlewares.helpers import call_chat_and_message
-from app.keyboards.inline import admin_menu_buttons as kb
+from app.keyboards.inline import menu_buttons as kb
 
 
 async def user_menu(message: Message):
-    await message.answer(text="Хай", reply_markup=kb.admin_menu)
+    await message.answer(text="Хай", reply_markup=kb.user_menu)
 
 
 async def user_menu_call(call: CallbackQuery):
@@ -18,7 +18,7 @@ async def user_menu_call(call: CallbackQuery):
         chat_id=chat_id,
         message_id=message_id,
         text="Хай",
-        reply_markup=kb.admin_menu,
+        reply_markup=kb.user_menu,
     )
 
 

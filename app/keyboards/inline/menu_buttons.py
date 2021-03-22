@@ -40,7 +40,7 @@ user_menu = InlineKeyboardMarkup(
         [
             InlineKeyboardButton(
                 text="Рахунки",
-                callback_data=cd.admin_menu_callback.new(value="Invoices"),
+                callback_data=cd.user_menu_callback.new(value="Invoices"),
             ),
         ],
     ]

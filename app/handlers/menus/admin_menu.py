@@ -5,7 +5,7 @@ from aiogram.types import Message, CallbackQuery
 from app.middlewares.checks import check_admin
 from app.keyboards.inline import callback_datas as cd
 from app.middlewares.helpers import call_chat_and_message
-from app.keyboards.inline import admin_menu_buttons as kb
+from app.keyboards.inline import menu_buttons as kb
 
 
 @check_admin
