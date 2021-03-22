@@ -17,8 +17,8 @@ from app.keyboards.inline import helper_buttons as help_kb
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from app.handlers.products.prod_helper import string_kinds, string_confirm
 
-
-async def product_list(call: CallbackQuery):
+@check_admin_or_user
+async def product_list(call: CallbackQuery, keyboard):
     chat_id, message_id = await call_chat_and_message(call)
     data = call["data"]
     text = "Перелік товарів"
@@ -43,7 +43,7 @@ async def product_list(call: CallbackQuery):
     )
     else:
         products = await prod_db.get_products(6, pages)
-        kb_prod_list = await kb.products_list(products, pages)
+        kb_prod_list = await kb.products_list(products, pages, keyboard)
         await bot.edit_message_text(
             chat_id=chat_id,
             message_id=message_id,

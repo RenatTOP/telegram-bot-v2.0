@@ -1,5 +1,4 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-import app.keyboards.inline
 import app.keyboards.inline.callback_datas as cd
 
 
