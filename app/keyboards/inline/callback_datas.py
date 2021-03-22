@@ -16,7 +16,7 @@ depart_button_confirm_del_callback = CallbackData("depart_confirm_del", "_id")
 depart_edit_edit_callback = CallbackData("depart_edit_edit", "field")
 
 
-prod_menu_callback = CallbackData("prod_menu", "value"
+prod_menu_callback = CallbackData("prod_menu", "value")
 user_prod_menu_callback = CallbackData("user_prod_menu", "value")
 prod_nav_list_callback = CallbackData("nav_prod", "pages")
 prod_confirm_callback = CallbackData("prod_confirm", "value")
