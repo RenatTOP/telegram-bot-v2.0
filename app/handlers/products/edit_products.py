@@ -21,7 +21,6 @@ from app.handlers.products.prod_helper import string_kinds, string_confirm
 async def product_list(call: CallbackQuery):
     chat_id, message_id = await call_chat_and_message(call)
     data = call["data"]
-    print(data)
     text = "Перелік товарів"
     pages = 0
     if 'nav_prod' in data:
@@ -44,7 +43,11 @@ async def product_list(call: CallbackQuery):
     )
     else:
         products = await prod_db.get_products(6, pages)
-        kb_prod_list = await kb.products_list(products, pages)
+        if "user" in data:
+            role = "user"
+        else:
+            role = "admin"
+        kb_prod_list = await kb.products_list(products, pages, role)
         await bot.edit_message_text(
             chat_id=chat_id,
             message_id=message_id,

@@ -113,7 +113,7 @@ add_edit_prod = InlineKeyboardMarkup(
 # ?edit Product buttons
 
 
-async def products_list(products: list, pages: int):
+async def products_list(products: list, pages: int, role: str):
     prod_list = InlineKeyboardMarkup()
     async for prod in products:
         _id = prod["_id"]
@@ -140,7 +140,7 @@ async def products_list(products: list, pages: int):
             callback_data=cd.prod_nav_list_callback.new(pages=f"{pages_next}"),
         )
     )
-    if 'admin' == "admin":
+    if role == "admin":
         prod_list.add(await help_kb.back("products"))
     else:
         prod_list.add(await help_kb.back("user_menu"))
