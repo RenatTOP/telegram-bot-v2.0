@@ -53,7 +53,7 @@ async def product_list(call: CallbackQuery):
         )
 
 
-async def info_prod(call: CallbackQuery, keyboard):
+async def info_prod(call: CallbackQuery):
     chat_id, message_id = await call_chat_and_message(call)
     prod_id = call["data"]
     prod_id = prod_id.split("prod_info_edit:", 1)[1]
@@ -75,7 +75,7 @@ async def info_prod(call: CallbackQuery, keyboard):
     )
 
 
-async def user_info_prod(call: CallbackQuery, keyboard):
+async def user_info_prod(call: CallbackQuery):
     chat_id, message_id = await call_chat_and_message(call)
     prod_id = call["data"]
     prod_id = prod_id.split("prod_info_edit:", 1)[1]
