@@ -35,4 +35,4 @@ async def get_products_from_cart(user_id: int):
 
 
 async def clear_cart(user_id: int):
-    await users.update_one({"userId": user_id}, {"$set": {"cart": {}}})["cart"]
+    await users.update_one({"userId": user_id}, {"$set": {"cart": {}}})
