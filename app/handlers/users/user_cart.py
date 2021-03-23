@@ -47,7 +47,7 @@ async def order_prod_in_cart():
 
 async def clear_cart(call: CallbackQuery):
     user_id = call.from_user.id
-    if check_cart(user_id):
+    if await check_cart(user_id):
         text = "Ваш кошик тепер порожній"
         await cart_db.clear_cart(user_id)
     else:
