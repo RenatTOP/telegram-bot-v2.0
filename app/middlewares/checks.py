@@ -34,12 +34,14 @@ async def check_department(name: str):
 
 
 async def check_cart(user_id: int):
-    cart = await users.find_one({"userId": user_id}, {"cart"})["cart"]
+    cart = await users.find_one({"userId": user_id}, {"cart"})
+    cart = cart["cart"]
     return bool(cart)
 
 
 async def check_prod_in_cart(user_id: int, prod_id: str):
-    cart = await users.find_one({"userId": user_id}, {"cart"})["cart"]
+    cart = await users.find_one({"userId": user_id}, {"cart"})
+    cart = cart["cart"]
     if cart[f"{prod_id}"] == 0:
         return "Кошик порожній"
     elif cart[f"{prod_id}"] == 5:
