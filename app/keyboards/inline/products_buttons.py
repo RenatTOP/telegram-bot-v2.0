@@ -120,7 +120,7 @@ async def products_list(products: list, pages: int, role: str):
         label = prod["label"]
         amount = prod["amount"]
         text_button = f"{label}\t\t, {amount/100.00} грн."
-        if role = 'admin':
+        if role == 'admin':
             prod_list.add(
                 InlineKeyboardButton(
                     text=text_button,
