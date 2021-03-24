@@ -21,14 +21,17 @@ async def get_products_from_cart(user_id: int):
     text = "Ваш кошик:\n"
     cart = await users.find_one({"userId": user_id}, {"cart"})
     cart = cart["cart"]
+    sumas = []
     if cart:
         for key in sorted(cart.keys()):
             products_in_cart = await products.find_one({"_id": ObjectId(key)})
             amount = products_in_cart["amount"]
             label = products_in_cart["label"]
             number = cart[key]
+            sumas[key] = amount × number / 100
             text += (f"\t\t\t\t<i><b>{label}</b>\t {amount/100.0} ₴\t x {number} шт</i>\n"
             )
+        print(sumas)
     else:
         text += "\t\t\t\t*порожньо*"
     return text
