@@ -81,7 +81,7 @@ async def info_prod(call: CallbackQuery):
 async def user_info_prod(call: CallbackQuery):
     chat_id, message_id = await call_chat_and_message(call)
     prod_id = call["data"]
-    prod_id = prod_id.split("prod_info_edit:", 1)[1]
+    prod_id = prod_id.split("prod_user_info_edit:", 1)[1]
     prod_data = await prod_db.get_product_by_id(prod_id)
     picture = prod_data["picture"]
     text = (
