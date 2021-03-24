@@ -120,12 +120,20 @@ async def products_list(products: list, pages: int, role: str):
         label = prod["label"]
         amount = prod["amount"]
         text_button = f"{label}\t\t, {amount/100.00} грн."
-        prod_list.add(
-            InlineKeyboardButton(
-                text=text_button,
-                callback_data=cd.prod_info_callback.new(_id=f"{_id}"),
+        if role = 'admin':
+            prod_list.add(
+                InlineKeyboardButton(
+                    text=text_button,
+                    callback_data=cd.prod_info_callback.new(_id=f"{_id}"),
+                )
             )
-        )
+        else:
+            prod_list.add(
+                InlineKeyboardButton(
+                    text=text_button,
+                    callback_data=cd  .prod_user_info_callback.new(_id=f"{_id}"),
+                )
+            )
     pages_back = pages - 6
     pages_next = pages + 6
     prod_list.add(
