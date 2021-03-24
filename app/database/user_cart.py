@@ -5,7 +5,7 @@ from app.database.database import products
 
 async def add_product_to_cart(user_id: int, prod_id: str):
     number_prod = await users.find_one({"userId": user_id}, {f"cart.{prod_id}"})
-    print(number_prod)
+    await print(number_prod)
     number_prod = number_prod["cart"][f"{prod_id}"]
     number_prod += 1
     await users.update_one({"userId": user_id}, {"$set": {f"cart.{prod_id}": number_prod}})
