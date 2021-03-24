@@ -28,7 +28,7 @@ async def get_products_from_cart(user_id: int):
             amount = products_in_cart["amount"]
             label = products_in_cart["label"]
             number = cart[key]
-            sumas[key] = int(amount) × int(number) / 100
+            sumas[key] = int(amount)×int(number)/100
             text += (f"\t\t\t\t<i><b>{label}</b>\t {amount/100.0} ₴\t x {number} шт</i>\n"
             )
         print(sumas)
