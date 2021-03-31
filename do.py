@@ -18,5 +18,5 @@ def set_hook():
 
 
 def start():
-    from app.bot import main
+    from bot import main
     main()

@@ -14,9 +14,10 @@ depart_button_del_callback = CallbackData("depart_del", "_id")
 depart_button_confirm_del_callback = CallbackData("depart_confirm_del", "_id")
 depart_edit_edit_callback = CallbackData("depart_edit_edit", "field")
 
-
+prod_button_sort = CallbackData("prod_sort", "sort")
+kind_sort_callback = CallbackData("kind_sort", "sort")
 prod_menu_callback = CallbackData("prod_menu", "value")
-prod_nav_list_callback = CallbackData("nav_prod", "pages")
+prod_nav_list_callback = CallbackData("nav_prod", "pages", "sort")
 prod_confirm_callback = CallbackData("prod_confirm", "value")
 prod_add_edit_callback = CallbackData("prod_add_edit", "field")
 prod_info_callback = CallbackData("prod_info_edit", "_id")

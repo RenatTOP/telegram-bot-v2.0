@@ -18,40 +18,6 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from app.handlers.products.prod_helper import string_kinds, string_confirm
 
 
-async def product_list(call: CallbackQuery):
-    chat_id, message_id = await call_chat_and_message(call)
-    data = call["data"]
-    text = "Перелік товарів"
-    pages = 0
-    if 'nav_prod' in data:
-        pages = data.split("nav_prod:", 1)[1]
-        pages = int(pages)
-    prod_count = await prod_db.get_count_products()
-    if pages > prod_count:
-        text = "Це остання сторінка"
-        await bot.answer_callback_query(
-        callback_query_id=call.id,
-        text=text,
-        show_alert=False
-    )
-    elif pages < 0:
-        text = "Це перша сторінка"
-        await bot.answer_callback_query(
-        callback_query_id=call.id,
-        text=text,
-        show_alert=False
-    )
-    else:
-        products = await prod_db.get_products(6, pages)
-        kb_prod_list = await kb.products_list(products, pages)
-        await bot.edit_message_text(
-            chat_id=chat_id,
-            message_id=message_id,
-            text=text,
-            reply_markup=kb_prod_list,
-        )
-
-
 @check_admin_or_user
 async def info_prod(call: CallbackQuery, keyboard):
     chat_id, message_id = await call_chat_and_message(call)
@@ -184,15 +150,6 @@ async def confirm_change(message: Message, state: FSMContext):
 
 
 def register_handlers_edit_product(dp: Dispatcher):
-    dp.register_callback_query_handler(
-        product_list, cd.prod_menu_callback.filter(value=["list"])
-    )
-    dp.register_callback_query_handler(
-        product_list, cd.prod_nav_list_callback.filter()
-    )
-    dp.register_callback_query_handler(
-        product_list, cd.button_back_callback.filter(value=["prod_list"])
-    )
     dp.register_callback_query_handler(info_prod, cd.prod_info_callback.filter())
     dp.register_callback_query_handler(edit_prod, cd.prod_button_edit_callback.filter())
     dp.register_callback_query_handler(edit_field, cd.prod_edit_edit_callback.filter())

@@ -10,7 +10,6 @@ from app.middlewares.helpers import call_chat_and_message, message_chat_and_mess
 from app.keyboards.inline import helper_buttons as help_kb
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from app.states.product import Kind
-from do import start
 
 
 async def add_kind(call: CallbackQuery):
@@ -30,11 +29,14 @@ async def add_kind(call: CallbackQuery):
 async def kind_name(message: Message, state: FSMContext):
     name = message.text
     name = name.strip()
-    text = f'Ви додали вид "{name}"'
+    if await check_kind(name):
+        text = 'Такий вид вже існує!'
+    else:
+        await kind_db.add_kind(name)
+        text = f'Ви додали вид "{name}"'
     kb_kind_back = InlineKeyboardMarkup()
     kb_kind_back.add(await help_kb.back("kinds"))
     await state.finish()
-    await kind_db.add_kind(name)
     await message.answer(text, reply_markup=kb_kind_back)
 
 

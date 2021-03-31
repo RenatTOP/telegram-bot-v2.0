@@ -1,7 +1,7 @@
 import app.keyboards.inline.callback_datas as cd
 from app.keyboards.inline import helper_buttons as help_kb
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-import json
+from app.database.kinds import sort_kinds
 
 # ?menu Product buttons
 
@@ -18,6 +18,10 @@ menu_prod = InlineKeyboardMarkup(
             ),
         ],
         [
+            InlineKeyboardButton(
+                text="Товари за видом",
+                callback_data=cd.prod_menu_callback.new(value="Kinds"),
+            ),
             InlineKeyboardButton(
                 text="Види товарів",
                 callback_data=cd.prod_menu_callback.new(value="Kinds"),
@@ -113,14 +117,14 @@ add_edit_prod = InlineKeyboardMarkup(
 # ?edit Product buttons
 
 
-async def products_list(products: list, pages: int):
-    prod_list = InlineKeyboardMarkup()
+async def products_list(products: list, pages: int, sort="none"):
+    prod_list_kb = InlineKeyboardMarkup()
     async for prod in products:
         _id = prod["_id"]
         label = prod["label"]
         amount = prod["amount"]
         text_button = f"{label}\t\t, {amount/100.00} грн."
-        prod_list.add(
+        prod_list_kb.add(
             InlineKeyboardButton(
                 text=text_button,
                 callback_data=cd.prod_info_callback.new(_id=f"{_id}"),
@@ -128,20 +132,32 @@ async def products_list(products: list, pages: int):
         )
     pages_back = pages - 6
     pages_next = pages + 6
-    prod_list.add(
+    prod_list_kb.add(
         InlineKeyboardButton(
             text="<== Попередня сторінка",
-            callback_data=cd.prod_nav_list_callback.new(pages=f"{pages_back}"),
+            callback_data=cd.prod_nav_list_callback.new(pages=f"{pages_back}", sort=sort),
         )
     )
-    prod_list.insert(
+    prod_list_kb.insert(
         InlineKeyboardButton(
             text="Наступна сторінка ==>",
-            callback_data=cd.prod_nav_list_callback.new(pages=f"{pages_next}"),
+            callback_data=cd.prod_nav_list_callback.new(pages=f"{pages_next}", sort=sort),
         )
     )
-    prod_list.add(await help_kb.back("products"))
-    return prod_list
+    prod_list_kb.add(await help_kb.back("products"))
+    return prod_list_kb
+
+
+async def sorted_kb(data):
+    kind_list = await sort_kinds(data)
+    kind_list_kb = InlineKeyboardMarkup()
+    async for kind in kind_list:
+        kind_list_kb.add(
+            InlineKeyboardButton(
+                text=kind,
+                callback_data=cd.kind_sort_callback.new(kind=f"{kind}"),
+            )
+        )
 
 
 async def admin_info_product(prod_id: str):

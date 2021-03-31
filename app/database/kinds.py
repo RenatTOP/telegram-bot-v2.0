@@ -9,9 +9,10 @@ async def add_kind(name: str):
 
 
 async def edit_kind(_id: str, name: str):
-    await products.update_many({"kind": ""}, {"$set": {"kind": name}})
-    await kinds.update_one({"_id": _id}, {"$set": {"name": name}})
-    return
+    kind = await kinds.find_one({"_id": ObjectId(_id)}, {"name"})
+    kind_name = kind['name']
+    await products.update_many({"kind": kind_name}, {"$set": {"kind": name}})
+    await kinds.update_one({"_id": ObjectId(_id)}, {"$set": {"name": name}})
 
 
 async def del_kind(_id: str):
@@ -23,6 +24,9 @@ async def del_kind(_id: str):
 async def get_kind_by_id(_id: str):
     return await kinds.find_one({"_id": ObjectId(_id)})
 
+
+async def sort_kinds(kind: str):
+    return kinds.find({"kind": kind})
 
 async def find_kinds():
     return kinds.find({}, {"name"}).sort("name")

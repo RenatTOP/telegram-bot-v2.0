@@ -107,11 +107,12 @@ async def prod_kind(message: Message, state: FSMContext):
 async def kind_list(call: CallbackQuery, state: FSMContext):
     chat_id, message_id = await call_chat_and_message(call)
     text = "Введіть назву нового виду товарів"
-    await Kind.waiting_for_name.set()
+    await Kind.waiting_for_name_prod.set()
     await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text)
 
 
 async def kind_name(message: Message, state: FSMContext):
+    print('No')
     name = message.text
     name = name.strip()
     kind = await state.get_data()
@@ -174,7 +175,7 @@ async def confirm_product(call: CallbackQuery, state: FSMContext):
         picture = prod_data["picture"]
         await prod_db.add_product(label, amount, kind, about, picture)
         edit_prod = InlineKeyboardMarkup()
-        edit_prod.add(await help_kb.back("prod_list"))
+        edit_prod.add(await help_kb.back("products"))
         await call.message.edit_reply_markup(reply_markup=None)
         await call.message.answer(
             f'Товар "{label}" було додано', reply_markup=edit_prod
@@ -256,7 +257,7 @@ def register_handlers_add_product(dp: Dispatcher):
     dp.register_message_handler(prod_about, state=Product.waiting_for_about)
     dp.register_message_handler(prod_picture, state=Product.waiting_for_picture)
     dp.register_callback_query_handler(kind_list, cd.kind_add_callback.filter(value="add"), state="*")
-    dp.register_message_handler(kind_name, state=Kind.waiting_for_name)
+    dp.register_message_handler(kind_name, state=Kind.waiting_for_name_prod)
     dp.register_callback_query_handler(
         confirm_product,
         cd.prod_confirm_callback.filter(value=["Yes", "No"]),

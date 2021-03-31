@@ -9,6 +9,7 @@ from app.keyboards.inline import kind_buttons as kb
 from app.middlewares.helpers import call_chat_and_message
 from app.keyboards.inline import helper_buttons as help_kb
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from app.states.product import Edit_Kind
 
 
 async def kind_list(call: CallbackQuery):
@@ -29,9 +30,7 @@ async def info_kind(call: CallbackQuery):
     kind_id = call["data"]
     kind_id = kind_id.split("kind_info_edit:", 1)[1]
     kind_data = await kind_db.get_kind_by_id(kind_id)
-    text = (
-        f'Вид: <b>{kind_data["name"]}</b>\n'
-    )
+    text = f'Вид: <b>{kind_data["name"]}</b>\n'
     kb_info_kind = await kb.info_kind(kind_id)
     await bot.edit_message_text(
         chat_id=chat_id,
@@ -41,7 +40,7 @@ async def info_kind(call: CallbackQuery):
     )
 
 
-async def edit_name(call: CallbackQuery):
+async def edit_name(call: CallbackQuery, state: FSMContext):
     chat_id, message_id = await call_chat_and_message(call)
     kind_id = call["data"]
     kind_id = kind_id.split("kind_edit:", 1)[1]
@@ -51,19 +50,35 @@ async def edit_name(call: CallbackQuery):
             [
                 InlineKeyboardButton(
                     text="⬅ Повернутися",
-                    callback_data=cd.kind_info_callback.new(
-                        _id=f"{kind_id}"
-                    ),
+                    callback_data=cd.kind_info_callback.new(_id=f"{kind_id}"),
                 ),
             ]
         ]
     )
+    await Edit_Kind.first()
+    await state.update_data(kind_id=kind_id)
     await bot.edit_message_text(
         chat_id=chat_id,
         message_id=message_id,
         text=text,
         reply_markup=edit_kind,
     )
+
+
+async def db_edit_name(message: Message, state: FSMContext):
+    name = message.text
+    name = name.strip()
+    kind_id = await state.get_data()
+    kind_id = kind_id["kind_id"]
+    edit_kind_kb = InlineKeyboardMarkup()
+    edit_kind_kb.add(await help_kb.back("kind_list"))
+    if await check_kind(name):
+        text = "Такий вид вже існує!"
+    else:
+        text = "Вид товару був зміненій, а також товари з цим видом були змінені"
+        await kind_db.edit_kind(kind_id, name)
+    await state.finish()
+    await message.answer(text, reply_markup=edit_kind_kb)
 
 
 def register_handlers_edit_kind(dp: Dispatcher):
@@ -75,3 +90,4 @@ def register_handlers_edit_kind(dp: Dispatcher):
     )
     dp.register_callback_query_handler(info_kind, cd.kind_info_callback.filter())
     dp.register_callback_query_handler(edit_name, cd.kind_button_edit_callback.filter())
+    dp.register_message_handler(db_edit_name, state=Edit_Kind.edit_name)
