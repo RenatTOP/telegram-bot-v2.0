@@ -32,14 +32,36 @@ async def info_prod(call: CallbackQuery, keyboard):
         f'Ціна:<b>{prod_data["amount"]/100.00} грн.</b>,\n'
         f'Опис:<b>{prod_data["about"]}</b> \n'
     )
-
-    kb_info_prod = await kb.admin_info_product(prod_id) if keyboard == "admin" else await kb.user_info_product(prod_id)
+    kb_info_prod = await kb.admin_info_product(prod_id)
     await bot.edit_message_text(
         chat_id=chat_id,
         message_id=message_id,
         text=text,
         reply_markup=kb_info_prod,
     )
+
+
+async def user_info_prod(call: CallbackQuery):
+    chat_id, message_id = await call_chat_and_message(call)
+    prod_id = call["data"]
+    prod_id = prod_id.split("prod_info:", 1)[1]
+    prod_data = await prod_db.get_product_by_id(prod_id)
+    picture = prod_data["picture"]
+    text = (
+        f"{hlink(' ', f'{picture}')}\n"
+        f'<b>{prod_data["label"]}</b>\n'
+        f'<b>{prod_data["kind"]}</b>,\n'
+        f'<b>{prod_data["amount"]/100.00} грн.</b>,\n'
+        f'<b>{prod_data["about"]}</b> \n'
+    )
+    kb_info_prod = await kb.user_info_product(prod_id)
+    await bot.edit_message_text(
+        chat_id=chat_id,
+        message_id=message_id,
+        text=text,
+        reply_markup=kb_info_prod,
+    )
+
 
 
 async def edit_prod(call: CallbackQuery, state=FSMContext):
@@ -150,7 +172,23 @@ async def confirm_change(message: Message, state: FSMContext):
 
 
 def register_handlers_edit_product(dp: Dispatcher):
+<<<<<<< HEAD
+=======
+    dp.register_callback_query_handler(
+        product_list, cd.prod_menu_callback.filter(value=["list"])
+    )
+    dp.register_callback_query_handler(
+            product_list, cd.user_prod_menu_callback.filter(value=["list"])
+        )
+    dp.register_callback_query_handler(
+        product_list, cd.prod_nav_list_callback.filter()
+    )
+    dp.register_callback_query_handler(
+        product_list, cd.button_back_callback.filter(value=["prod_list"])
+    )
+>>>>>>> d949729283d4a49d1ebfbab55f046eaba97c2855
     dp.register_callback_query_handler(info_prod, cd.prod_info_callback.filter())
+    dp.register_callback_query_handler(user_info_prod, cd.prod_user_info_callback.filter())
     dp.register_callback_query_handler(edit_prod, cd.prod_button_edit_callback.filter())
     dp.register_callback_query_handler(edit_field, cd.prod_edit_edit_callback.filter())
     dp.register_message_handler(

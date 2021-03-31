@@ -47,7 +47,7 @@ async def order_prod_in_cart():
 
 async def clear_cart(call: CallbackQuery):
     user_id = call.from_user.id
-    if check_cart(user_id):
+    if await check_cart(user_id):
         text = "Ваш кошик тепер порожній"
         await cart_db.clear_cart(user_id)
     else:
@@ -68,5 +68,5 @@ def register_handlers_cart(dp: Dispatcher):
         del_prod_from_cart, cd.del_from_cart_button.filter()
     )
     dp.register_callback_query_handler(
-        clear_cart, cd.button_back_callback.filter(value="user_menu")
+        clear_cart, cd.button_back_callback.filter(value="")
     )
