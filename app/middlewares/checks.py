@@ -65,13 +65,26 @@ def check_admin(func):
     return wrap
 
 
-def check_admin_or_user(func):
-    @wraps(func)
-    async def wrap(*args, **kwargs):
-        user_id = args[0].from_user.id
-        admin = await db_check_admin(user_id)
-        if admin['isAdmin']:
-            await func(*args, **kwargs, keyboard='admin')
-        else:
-            await func(*args, **kwargs, keyboard='user')
-    return wrap
+async def check_admin_or_user(state):
+    check = await state.get_data()
+    check = check['check']
+    return check
+
+
+async def check_kind_state(state):
+    kind = await state.get_data()
+    kind = kind['kind']
+    return kind
+
+
+# def check_admin_or_user(func):
+#     @wraps(func)
+#     async def wrap(call_or_message, state):
+#         check = await state.get_data()
+#         print(check)
+#         check = check['check']
+#         if check == "admin":
+#             await func(call_or_message, state, check='admin')
+#         else:
+#             await func(call_or_message, state, check='user')
+#     return wrap

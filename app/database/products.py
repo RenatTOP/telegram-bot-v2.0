@@ -14,13 +14,19 @@ async def add_product(label: str, amount: int, kind: str, about: str, picture: s
     return await products.insert_one(data)
 
 
-async def get_count_products():
-    all_products = await products.count_documents({})
+async def get_count_products(kind):
+    if kind == 'none' or not kind:
+        all_products = await products.count_documents({})
+    else:
+        all_products = await products.count_documents({"kind": kind})
     return all_products
 
 
-async def get_products(page_size: int, pages: int):
-    all_products = products.find({}).limit(page_size).skip(pages).sort("label")
+async def get_products(page_size: int, pages: int, kind):
+    if kind == 'none' or not kind:
+        all_products = products.find({}).limit(page_size).skip(pages).sort("label")
+    else:
+        all_products = products.find({"kind": kind}).limit(page_size).skip(pages).sort("label")
     return all_products
 
 

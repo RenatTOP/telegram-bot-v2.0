@@ -45,14 +45,14 @@ async def users(call: CallbackQuery, state: FSMContext):
 
 def register_handlers_menu_departments(dp: Dispatcher):
     dp.register_callback_query_handler(
-        departments, cb.admin_menu_callback.filter(value=["Departments"]), state="*"
+        departments, cb.menu_callback.filter(value=["Departments"]), state="*"
     )
     dp.register_callback_query_handler(
         departments, cb.button_back_callback.filter(value=["departments"]), state="*"
     )
     dp.register_callback_query_handler(
-        ivoices, cb.admin_menu_callback.filter(value=["Invoices"]), state="*"
+        ivoices, cb.menu_callback.filter(value=["Invoices"]), state="*"
     )
     dp.register_callback_query_handler(
-        users, cb.admin_menu_callback.filter(value=["Users"]), state="*"
+        users, cb.menu_callback.filter(value=["Users"]), state="*"
     )

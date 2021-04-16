@@ -17,7 +17,7 @@ dp = Dispatcher(bot, storage=MemoryStorage(), loop=loop)
 logging.basicConfig(level=logging.INFO)
 
 
-if __name__ == "__main__":
+def main():
     from app.handlers import usergeo, info, kinds1
     from app.handlers.users.users_handler import register_handlers_users
     from app.handlers.departments.departments_handlers import register_handlers_department
@@ -47,6 +47,9 @@ if __name__ == "__main__":
         domain="helloworld", localedir=locale_path, languages=[current_locale]
     )
     gnu_translations.install()
-    print(_("helloworld")) # pylint:disable=undefined-variable
-
+    print(_("helloworld")) #pylint:disable=undefined-variable
     executor.start_polling(dp, skip_updates=True)
+
+
+if __name__ == "__main__":
+    main()

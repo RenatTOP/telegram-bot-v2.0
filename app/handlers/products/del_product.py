@@ -13,7 +13,7 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 async def del_product(call: CallbackQuery):
     chat_id, message_id = await call_chat_and_message(call)
     prod = call["data"]
-    prod_id = prod.split("prod_del:", 1)[1]
+    prod_id = prod.replace("prod_del:", "")
     text = "Видалити цей товар?"
     kb_del_prod = await kb.del_product(prod_id)
     await bot.edit_message_text(

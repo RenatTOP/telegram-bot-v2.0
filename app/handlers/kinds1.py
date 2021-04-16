@@ -32,7 +32,7 @@ async def paste_kind_in_empty_products(message: Message):
         kind = kind.strip()
         check_kind = checks.check_kind(kind)
         if check_is_admin(user_id) and check_kind and checks.check_empty_kind:
-            kind_db.paste_kind(kind)
+            # kind_db.paste_kind(kind)
             await message.answer(f"Тип {kind} було додано до товарів без типу")
         elif not check_kind:
             await message.answer("Такий тип товару не існує!")

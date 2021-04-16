@@ -7,6 +7,7 @@ from app.states.product import Kind, Product
 from app.middlewares.checks import check_kind
 from aiogram.types import Message, CallbackQuery
 from app.keyboards.inline import callback_datas as cd
+from app.middlewares.checks import check_admin_or_user
 from app.keyboards.inline import products_buttons as kb
 from app.middlewares.helpers import call_chat_and_message
 from app.keyboards.inline import helper_buttons as help_kb
@@ -16,7 +17,10 @@ from app.handlers.products.prod_helper import string_kinds, string_confirm
 
 async def add_product(call: CallbackQuery, state: FSMContext):
     chat_id, message_id = await call_chat_and_message(call)
+    data = await state.get_data()
+    check, kind = data["check"], data["kind"]
     await state.finish()
+    await state.update_data(check=check, kind=kind)
     await Product.first()
     text = f"Введіть назву товару"
     kb_prod_back = InlineKeyboardMarkup()
@@ -73,19 +77,19 @@ async def prod_kind(message: Message, state: FSMContext):
     kind = kind.strip()
     prod_data = await state.get_data()
     if await check_kind(kind):
-        if "kind" in prod_data:
-            await state.update_data(kind=kind)
+        if "prod_kind" in prod_data:
+            await state.update_data(prod_kind=kind)
             prod_data = await state.get_data()
             await Product.waiting_for_confirm.set()
             text = await string_confirm(prod_data)
             await message.answer(text, reply_markup=kb.confinm_prod)
         else:
-            await state.update_data(kind=kind)
+            await state.update_data(prod_kind=kind)
             await Product.next()
             text = "Введіть опис товару"
             await message.answer(text)
     else:
-        await state.update_data(kind=kind)
+        await state.update_data(add_kind=kind)
         kinds = await string_kinds()
         edit_prod = InlineKeyboardMarkup(
             inline_keyboard=[
@@ -112,16 +116,15 @@ async def kind_list(call: CallbackQuery, state: FSMContext):
 
 
 async def kind_name(message: Message, state: FSMContext):
-    print('No')
     name = message.text
     name = name.strip()
     kind = await state.get_data()
-    kind = kind["kind"]
+    kind = kind["add_kind"]
     if kind != name:
         text = "Введений раніше вид та створений "+\
                 "не співпадають, введіть коректно"
     elif not await check_kind(name):
-        await state.update_data(kind=name)
+        await state.update_data(prod_kind=name)
         text = "Новий вид створено\nТепер введіть опис товару"
         await Product.waiting_for_about.set()
         await kind_db.add_kind(name)
@@ -170,7 +173,7 @@ async def confirm_product(call: CallbackQuery, state: FSMContext):
         prod_data = await state.get_data()
         label = prod_data["label"]
         amount = int(prod_data["amount"])
-        kind = prod_data["kind"]
+        kind = prod_data["prod_kind"]
         about = prod_data["about"]
         picture = prod_data["picture"]
         await prod_db.add_product(label, amount, kind, about, picture)
@@ -180,8 +183,10 @@ async def confirm_product(call: CallbackQuery, state: FSMContext):
         await call.message.answer(
             f'Товар "{label}" було додано', reply_markup=edit_prod
         )
+        data = await state.get_data()
+        check, kind = data["check"], data["kind"]
         await state.finish()
-
+        await state.update_data(check=check, kind=kind)
     elif call["data"] == "prod_confirm:No":
         text = "Оберіть що треба редагувати:"
         await bot.edit_message_text(
@@ -190,27 +195,22 @@ async def confirm_product(call: CallbackQuery, state: FSMContext):
             text=text,
             reply_markup=kb.add_edit_prod,
         )
-
     elif call["data"] == "prod_add_edit:label":
         await Product.waiting_for_label.set()
         text = "Введіть нову назву товару"
         await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text)
-
     elif call["data"] == "prod_add_edit:amount":
         await Product.waiting_for_amount.set()
         text = "Введіть нову ціну товару у копійках"
         await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text)
-
-    elif call["data"] == "prod_add_edit:kind":
+    elif call["data"] == "prod_add_edit:prod_kind":
         await Product.waiting_for_kind.set()
         text = "Введіть новий вид товару"
         await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text)
-
     elif call["data"] == "prod_add_edit:about":
         await Product.waiting_for_about.set()
         text = "Введіть новий опис товару"
         await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text)
-
     elif call["data"] == "prod_add_edit:picture":
         await Product.waiting_for_picture.set()
         text = "Введіть новие посилання на картинку товару"
@@ -266,7 +266,7 @@ def register_handlers_add_product(dp: Dispatcher):
     dp.register_callback_query_handler(
         confirm_product,
         cd.prod_add_edit_callback.filter(
-            field=["label", "amount", "kind", "about", "picture"]
+            field=["label", "amount", "prod_kind", "about", "picture"]
         ),
         state=Product.waiting_for_confirm,
     )

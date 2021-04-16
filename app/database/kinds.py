@@ -25,8 +25,5 @@ async def get_kind_by_id(_id: str):
     return await kinds.find_one({"_id": ObjectId(_id)})
 
 
-async def sort_kinds(kind: str):
-    return kinds.find({"kind": kind})
-
 async def find_kinds():
     return kinds.find({}, {"name"}).sort("name")

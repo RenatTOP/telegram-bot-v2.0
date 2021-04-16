@@ -2,8 +2,7 @@ import aiogram.types
 from aiogram.utils.callback_data import CallbackData
 
 
-admin_menu_callback = CallbackData("admin_menu", "value")
-user_menu_callback = CallbackData("user_menu", "value")
+menu_callback = CallbackData("admin_menu", "value")
 button_back_callback = CallbackData("back", "value")
 
 depart_menu_callback = CallbackData("depart_menu", "value")
@@ -15,14 +14,13 @@ depart_button_del_callback = CallbackData("depart_del", "_id")
 depart_button_confirm_del_callback = CallbackData("depart_confirm_del", "_id")
 depart_edit_edit_callback = CallbackData("depart_edit_edit", "field")
 
-prod_button_sort = CallbackData("prod_sort", "sort")
+prod_button_sort = CallbackData("prod_sort", "kind")
 kind_sort_callback = CallbackData("kind_sort", "sort")
 prod_menu_callback = CallbackData("prod_menu", "value")
-prod_nav_list_callback = CallbackData("nav_prod", "pages", "sort")
+prod_nav_list_callback = CallbackData("nav_prod", "pages")
 prod_confirm_callback = CallbackData("prod_confirm", "value")
 prod_add_edit_callback = CallbackData("prod_add_edit", "field")
 prod_info_callback = CallbackData("prod_info_edit", "_id")
-prod_user_info_callback = CallbackData("prod_info", "_id")
 prod_button_edit_callback = CallbackData("prod_edit", "_id")
 prod_button_del_callback = CallbackData("prod_del", "_id")
 prod_button_confirm_del_callback = CallbackData("prod_confirm_del", "_id")

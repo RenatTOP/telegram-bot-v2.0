@@ -14,10 +14,13 @@ async def add_product_to_cart(user_id: int, prod_id: str):
 
 
 async def del_product_from_cart(user_id: int, prod_id: str):
-    number_prod = await users.find_one({"userId": user_id}, {f"cart.{prod_id}"})
-    number_prod = number_prod["cart"][f"{prod_id}"]
-    number_prod -= 1
-    await users.update_one({"userId": user_id}, {"$set": {f"cart.{prod_id}": number_prod}})
+    number_prod_cart = await users.find_one({"userId": user_id}, {f"cart.{prod_id}"})
+    number_prod = number_prod_cart["cart"][f"{prod_id}"]
+    if number_prod == 1:
+        await users.update_one({"userId": user_id}, {"$unset": {f"cart.{prod_id}": 1}})
+    else:
+        number_prod -= 1
+        await users.update_one({"userId": user_id}, {"$set": {f"cart.{prod_id}": number_prod}})
 
 
 async def get_products_from_cart(user_id: int):

@@ -7,21 +7,21 @@ admin_menu = InlineKeyboardMarkup(
         [
             InlineKeyboardButton(
                 text="Заклади",
-                callback_data=cd.admin_menu_callback.new(value="Departments"),
+                callback_data=cd.menu_callback.new(value="Departments"),
             ),
             InlineKeyboardButton(
                 text="Товари",
-                callback_data=cd.admin_menu_callback.new(value="Products"),
+                callback_data=cd.menu_callback.new(value="Products"),
             ),
         ],
         [
             InlineKeyboardButton(
                 text="Рахунки",
-                callback_data=cd.admin_menu_callback.new(value="Invoices"),
+                callback_data=cd.menu_callback.new(value="Invoices"),
             ),
             InlineKeyboardButton(
                 text="Користувачі",
-                callback_data=cd.admin_menu_callback.new(value="Users"),
+                callback_data=cd.menu_callback.new(value="Users"),
             ),
         ],
     ]
@@ -33,13 +33,13 @@ user_menu = InlineKeyboardMarkup(
         [
             InlineKeyboardButton(
                 text="Товари",
-                callback_data=cd.user_prod_menu_callback.new(value="list"),
+                callback_data=cd.menu_callback.new(value="Products"),
             ),
         ],
         [
             InlineKeyboardButton(
                 text="Рахунки",
-                callback_data=cd.user_menu_callback.new(value="Invoices"),
+                callback_data=cd.menu_callback.new(value="Invoices"),
             ),
         ],
     ]

@@ -18,33 +18,11 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from app.handlers.products.prod_helper import string_kinds, string_confirm
 
 
-@check_admin_or_user
-async def info_prod(call: CallbackQuery, keyboard):
+async def info_prod(call: CallbackQuery, state: FSMContext):
     chat_id, message_id = await call_chat_and_message(call)
+    check = await check_admin_or_user(state)
     prod_id = call["data"]
     prod_id = prod_id.split("prod_info_edit:", 1)[1]
-    prod_data = await prod_db.get_product_by_id(prod_id)
-    picture = prod_data["picture"]
-    text = (
-        f"{hlink(' ', f'{picture}')}\n"
-        f'Назва товару: <b>{prod_data["label"]}</b>\n'
-        f'Вид: <b>{prod_data["kind"]}</b>,\n'
-        f'Ціна:<b>{prod_data["amount"]/100.00} грн.</b>,\n'
-        f'Опис:<b>{prod_data["about"]}</b> \n'
-    )
-    kb_info_prod = await kb.admin_info_product(prod_id)
-    await bot.edit_message_text(
-        chat_id=chat_id,
-        message_id=message_id,
-        text=text,
-        reply_markup=kb_info_prod,
-    )
-
-
-async def user_info_prod(call: CallbackQuery):
-    chat_id, message_id = await call_chat_and_message(call)
-    prod_id = call["data"]
-    prod_id = prod_id.split("prod_info:", 1)[1]
     prod_data = await prod_db.get_product_by_id(prod_id)
     picture = prod_data["picture"]
     text = (
@@ -54,7 +32,7 @@ async def user_info_prod(call: CallbackQuery):
         f'<b>{prod_data["amount"]/100.00} грн.</b>,\n'
         f'<b>{prod_data["about"]}</b> \n'
     )
-    kb_info_prod = await kb.user_info_product(prod_id)
+    kb_info_prod = await kb.info_product(prod_id, check)
     await bot.edit_message_text(
         chat_id=chat_id,
         message_id=message_id,
@@ -63,13 +41,14 @@ async def user_info_prod(call: CallbackQuery):
     )
 
 
-
 async def edit_prod(call: CallbackQuery, state=FSMContext):
     chat_id, message_id = await call_chat_and_message(call)
     prod = call["data"]
     prod_id = prod.split("prod_edit:", 1)[1]
+    data = await state.get_data()
+    check, kind = data["check"], data["kind"]
     await state.finish()
-    await state.update_data(_id=prod_id)
+    await state.update_data(_id=prod_id, check=check, kind=kind)
     text = "Оберіть що треба редагувати"
     await bot.edit_message_text(
         chat_id=chat_id, message_id=message_id, text=text, reply_markup=kb.edit_fields
@@ -85,28 +64,24 @@ async def edit_field(call: CallbackQuery):
         await bot.edit_message_text(
             chat_id=chat_id, message_id=message_id, text=text, reply_markup=None
         )
-
     elif re.search(r"amount", prod):
         await Edit_Product.edit_amount.set()
         text = "Введіть нову ціну товару"
         await bot.edit_message_text(
             chat_id=chat_id, message_id=message_id, text=text, reply_markup=None
         )
-
     elif re.search(r"kind", prod):
         await Edit_Product.edit_kind.set()
         text = "Введіть новий вид товару"
         await bot.edit_message_text(
             chat_id=chat_id, message_id=message_id, text=text, reply_markup=None
         )
-
     elif re.search(r"about", prod):
         await Edit_Product.edit_about.set()
         text = "Введіть новий опис товару"
         await bot.edit_message_text(
             chat_id=chat_id, message_id=message_id, text=text, reply_markup=None
         )
-
     elif re.search(r"picture", prod):
         await Edit_Product.edit_picture.set()
         text = "Введіть новие посилання на картинку товару"
@@ -127,16 +102,14 @@ async def confirm_change(message: Message, state: FSMContext):
     if my_state == "Edit_Product:edit_label":
         await prod_db.edit_product(_id, "label", value)
         await message.answer(text=text, reply_markup=edit_prod)
-
     elif my_state == "Edit_Product:edit_amount":
         if value.isdigit():
             await prod_db.edit_product(_id, "amount", value)
             await message.answer(text=text, reply_markup=edit_prod)
         else:
-            text = 'Введіть ціну коректно'
+            text = "Введіть ціну коректно"
             await message.answer(text=text, reply_markup=None)
             return
-
     elif my_state == "Edit_Product:edit_kind":
         if await check_kind(value):
             await prod_db.edit_product(_id, "kind", value)
@@ -154,41 +127,26 @@ async def confirm_change(message: Message, state: FSMContext):
                     ],
                 ]
             )
-            text = "Немає такого виду, введіть один"+\
-                    "із переліку або створять новий\n"+\
-                    f"{kinds}"
+            text = (
+                "Немає такого виду, введіть один із переліку або створять новий\n"
+                + f"{kinds}"
+            )
             await message.answer(text=text, reply_markup=edit_prod)
             return
-
     elif my_state == "Edit_Product:edit_about":
         await prod_db.edit_product(_id, "about", value)
         await message.answer(text=text, reply_markup=edit_prod)
-
     elif my_state == "Edit_Product:edit_picture":
         await prod_db.edit_product(_id, "picture", value)
         await message.answer(text=text, reply_markup=edit_prod)
 
+    check, kind = data["check"], data["kind"]
     await state.finish()
+    await state.update_data(check=check, kind=kind)
 
 
 def register_handlers_edit_product(dp: Dispatcher):
-<<<<<<< HEAD
-=======
-    dp.register_callback_query_handler(
-        product_list, cd.prod_menu_callback.filter(value=["list"])
-    )
-    dp.register_callback_query_handler(
-            product_list, cd.user_prod_menu_callback.filter(value=["list"])
-        )
-    dp.register_callback_query_handler(
-        product_list, cd.prod_nav_list_callback.filter()
-    )
-    dp.register_callback_query_handler(
-        product_list, cd.button_back_callback.filter(value=["prod_list"])
-    )
->>>>>>> d949729283d4a49d1ebfbab55f046eaba97c2855
     dp.register_callback_query_handler(info_prod, cd.prod_info_callback.filter())
-    dp.register_callback_query_handler(user_info_prod, cd.prod_user_info_callback.filter())
     dp.register_callback_query_handler(edit_prod, cd.prod_button_edit_callback.filter())
     dp.register_callback_query_handler(edit_field, cd.prod_edit_edit_callback.filter())
     dp.register_message_handler(

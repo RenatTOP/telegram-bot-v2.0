@@ -43,7 +43,7 @@ confirm_or_fail_cancel = InlineKeyboardMarkup(
         [
             InlineKeyboardButton(
                 text="Так",
-                callback_data=cd.admin_menu_callback.new(value="Departments"),
+                callback_data=cd.menu_callback.new(value="Departments"),
             ),
             InlineKeyboardButton(
                 text="Ні", callback_data=cd.depart_confirm_callback.new(value="Not")
