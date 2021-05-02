@@ -6,14 +6,14 @@ import aiogram.dispatcher.filters
 from aiogram.utils.markdown import hlink
 from aiogram.dispatcher import FSMContext
 from app.states.product import Edit_Product
-from app.middlewares.checks import check_admin_or_user
 from app.database import products as prod_db
 from app.middlewares.checks import check_kind
 from aiogram.types import Message, CallbackQuery
 from app.keyboards.inline import callback_datas as cd
+from app.middlewares.checks import check_admin_or_user
 from app.middlewares.helpers import call_chat_and_message
 from app.keyboards.inline import products_buttons as kb
-from app.keyboards.inline import helper_buttons as help_kb
+from app.keyboards.inline.helper_buttons import back
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from app.handlers.products.prod_helper import string_kinds, string_confirm
 
@@ -22,7 +22,7 @@ async def info_prod(call: CallbackQuery, state: FSMContext):
     chat_id, message_id = await call_chat_and_message(call)
     check = await check_admin_or_user(state)
     prod_id = call["data"]
-    prod_id = prod_id.split("prod_info_edit:", 1)[1]
+    prod_id = prod_id.replace("prod_info_edit:", "")
     prod_data = await prod_db.get_product_by_id(prod_id)
     picture = prod_data["picture"]
     text = (
@@ -44,7 +44,7 @@ async def info_prod(call: CallbackQuery, state: FSMContext):
 async def edit_prod(call: CallbackQuery, state=FSMContext):
     chat_id, message_id = await call_chat_and_message(call)
     prod = call["data"]
-    prod_id = prod.split("prod_edit:", 1)[1]
+    prod_id = prod.replace("prod_edit:", "")
     data = await state.get_data()
     check, kind = data["check"], data["kind"]
     await state.finish()
@@ -98,7 +98,7 @@ async def confirm_change(message: Message, state: FSMContext):
     value = value.strip()
     text = "Зміни прийняті"
     edit_prod = InlineKeyboardMarkup()
-    edit_prod.add(await help_kb.back("prod_list"))
+    edit_prod.add(back("prod_list"))
     if my_state == "Edit_Product:edit_label":
         await prod_db.edit_product(_id, "label", value)
         await message.answer(text=text, reply_markup=edit_prod)

@@ -10,7 +10,7 @@ from app.states.department import Edit_Department
 from app.keyboards.inline import callback_datas as cd
 from app.middlewares.helpers import call_chat_and_message
 from app.keyboards.inline import department_buttons as kb
-from app.keyboards.inline import helper_buttons as help_kb
+from app.keyboards.inline.helper_buttons import back
 from app.handlers.departments.depart_helper import string_week
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
@@ -117,7 +117,7 @@ async def confirm_change(message: Message, state: FSMContext):
     value = message.text
     text = "Зміни прийняті"
     edit_depart = InlineKeyboardMarkup()
-    edit_depart.add(await help_kb.back("depart_list"))
+    edit_depart.add(back("depart_list"))
     if my_state == "Edit_Department:edit_name":
         await depart_db.edit_depart(_id, "name", value)
         await message.answer(text=text, reply_markup=edit_depart)

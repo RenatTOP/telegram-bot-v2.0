@@ -19,17 +19,15 @@ logging.basicConfig(level=logging.INFO)
 
 def main():
     from app.handlers import usergeo, info, kinds1
-    from app.handlers.users.users_handler import register_handlers_users
-    from app.handlers.departments.departments_handlers import register_handlers_department
-    from app.handlers.menus.menus_handlers import register_handlers_menus
-    from app.handlers.products.products_handler import register_handlers_products
-    from app.handlers.kinds.kinds_handler import register_handlers_kinds
+    from app.handlers.users import register_handlers_users
+    from app.handlers.departments import register_handlers_department
+    from app.handlers.menus import register_handlers_menus
+    from app.handlers.products import register_handlers_products
+    from app.handlers.kinds import register_handlers_kinds
 
     register_handlers_users(dp)
     usergeo.register_handlers_user_geo(dp)
-
     register_handlers_menus(dp)
-
     register_handlers_department(dp)
     register_handlers_kinds(dp)
     info.register_handlers_info(dp)

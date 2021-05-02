@@ -10,7 +10,7 @@ from app.keyboards.inline import callback_datas as cd
 from app.middlewares.checks import check_admin_or_user
 from app.keyboards.inline import products_buttons as kb
 from app.middlewares.helpers import call_chat_and_message
-from app.keyboards.inline import helper_buttons as help_kb
+from app.keyboards.inline.helper_buttons import back
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from app.handlers.products.prod_helper import string_kinds, string_confirm
 
@@ -24,7 +24,7 @@ async def add_product(call: CallbackQuery, state: FSMContext):
     await Product.first()
     text = f"Введіть назву товару"
     kb_prod_back = InlineKeyboardMarkup()
-    kb_prod_back.add(await help_kb.back("products"))
+    kb_prod_back.add(back("products"))
     await bot.edit_message_text(
         chat_id=chat_id,
         message_id=message_id,
@@ -178,7 +178,7 @@ async def confirm_product(call: CallbackQuery, state: FSMContext):
         picture = prod_data["picture"]
         await prod_db.add_product(label, amount, kind, about, picture)
         edit_prod = InlineKeyboardMarkup()
-        edit_prod.add(await help_kb.back("products"))
+        edit_prod.add(back("products"))
         await call.message.edit_reply_markup(reply_markup=None)
         await call.message.answer(
             f'Товар "{label}" було додано', reply_markup=edit_prod

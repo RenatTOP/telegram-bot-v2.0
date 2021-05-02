@@ -1,5 +1,5 @@
 import app.keyboards.inline.callback_datas as cd
-from app.keyboards.inline import helper_buttons as help_kb
+from app.keyboards.inline.helper_buttons import back
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
@@ -15,7 +15,7 @@ async def kinds_list(kinds: list):
                 callback_data=cd.kind_info_callback.new(_id=f"{_id}"),
             )
         )
-    kind_list.add(await help_kb.back("kinds"))
+    kind_list.add(back("kinds"))
     return kind_list
 
 
@@ -36,7 +36,7 @@ async def info_kind(kind_id: str):
             ]
         ]
     )
-    info_kind.add(await help_kb.back("kind_list"))
+    info_kind.add(back("kind_list"))
     return info_kind
 
 

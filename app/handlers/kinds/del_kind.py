@@ -6,7 +6,7 @@ from app.database import kinds as kind_db
 from app.keyboards.inline import callback_datas as cd
 from app.middlewares.helpers import call_chat_and_message
 from app.keyboards.inline import kind_buttons as kb
-from app.keyboards.inline import helper_buttons as help_kb
+from app.keyboards.inline.helper_buttons import back
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
@@ -31,7 +31,7 @@ async def kind_confirm_del(call: CallbackQuery):
     await kind_db.del_kind(kind_id)
     text = "Ви видалили цей вид, а також видалили вид у товарів з цим видом"
     edit_kind = InlineKeyboardMarkup()
-    edit_kind.add(await help_kb.back("kind_list"))
+    edit_kind.add(back("kind_list"))
     await bot.edit_message_text(
         chat_id=chat_id, message_id=message_id, text=text, reply_markup=edit_kind
     )

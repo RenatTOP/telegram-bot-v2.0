@@ -6,7 +6,7 @@ from aiogram.types import Message, CallbackQuery
 from app.keyboards.inline import callback_datas as cd
 from app.keyboards.inline import products_buttons as kb
 from app.middlewares.helpers import call_chat_and_message
-from app.keyboards.inline import helper_buttons as help_kb
+from app.keyboards.inline.helper_buttons import back
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
@@ -27,7 +27,7 @@ async def kinds(call: CallbackQuery, state: FSMContext):
             ]
         ]
     )
-    kb_kind_back.add(await help_kb.back("products"))
+    kb_kind_back.add(back("products"))
     await bot.edit_message_text(
         chat_id=chat_id,
         message_id=message_id,

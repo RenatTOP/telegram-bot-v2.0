@@ -7,7 +7,7 @@ from aiogram.types import Message, CallbackQuery
 from app.keyboards.inline import callback_datas as cd
 from app.keyboards.inline import kind_buttons as kb
 from app.middlewares.helpers import call_chat_and_message
-from app.keyboards.inline import helper_buttons as help_kb
+from app.keyboards.inline.helper_buttons import back
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from app.states.product import Edit_Kind
 
@@ -71,7 +71,7 @@ async def db_edit_name(message: Message, state: FSMContext):
     kind_id = await state.get_data()
     kind_id = kind_id["kind_id"]
     edit_kind_kb = InlineKeyboardMarkup()
-    edit_kind_kb.add(await help_kb.back("kind_list"))
+    edit_kind_kb.add(back("kind_list"))
     if await check_kind(name):
         text = "Такий вид вже існує!"
     else:

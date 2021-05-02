@@ -1,6 +1,7 @@
 import app.keyboards.inline.callback_datas as cd
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from app.keyboards.inline import helper_buttons as help_kb
+from app.keyboards.inline.helper_buttons import back
+
 
 # ?menu Department buttons
 
@@ -24,6 +25,8 @@ menu_depart = InlineKeyboardMarkup(
         ],
     ]
 )
+menu_depart.add(back("admin_menu"))
+
 
 # ?add Department buttons
 
@@ -122,7 +125,7 @@ async def departments_list(departments: list):
                 callback_data=cd.depart_info_callback.new(_id=f"{_id}"),
             )
         )
-    depart_list.add(await help_kb.back("departments"))
+    depart_list.add(back("departments"))
     return depart_list
 
 
@@ -143,7 +146,7 @@ async def info_department(depart_id: str):
             ]
         ]
     )
-    info_depart.add(await help_kb.back("depart_list"))
+    info_depart.add(back("depart_list"))
     return info_depart
 
 
