@@ -174,7 +174,7 @@ async def products_list(pages: int, check, kind):
     return prod_list_kb
 
 
-async def kinds_kb(check):
+async def kinds_kb():
     kind_list = await find_kinds()
     kind_list_kb = InlineKeyboardMarkup(row_width=2)
     async for kind in kind_list:

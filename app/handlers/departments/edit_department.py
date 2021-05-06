@@ -15,19 +15,6 @@ from app.handlers.departments.depart_helper import string_week
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
-async def department_list(call: CallbackQuery):
-    chat_id, message_id = await call_chat_and_message(call)
-    departments = await depart_db.departments_list()
-    text = "Перелік закладів"
-    kb_depart_list = await kb.departments_list(departments)
-    await bot.edit_message_text(
-        chat_id=chat_id,
-        message_id=message_id,
-        text=text,
-        reply_markup=kb_depart_list,
-    )
-
-
 async def info_depart(call: CallbackQuery):
     chat_id, message_id = await call_chat_and_message(call)
     depart_id = call["data"]
@@ -59,8 +46,9 @@ async def edit_depart(call: CallbackQuery, state=FSMContext):
     await state.finish()
     await state.update_data(_id=depart_id)
     text = "Оберіть що треба редагувати"
+    edit_kb = await kb.edit_fields(depart_id)
     await bot.edit_message_text(
-        chat_id=chat_id, message_id=message_id, text=text, reply_markup=kb.edit_fields
+        chat_id=chat_id, message_id=message_id, text=text, reply_markup=edit_kb
     )
 
 
@@ -177,12 +165,6 @@ async def confirm_change(message: Message, state: FSMContext):
 
 
 def register_handlers_edit_department(dp: Dispatcher):
-    dp.register_callback_query_handler(
-        department_list, cd.depart_menu_callback.filter(value="list")
-    )
-    dp.register_callback_query_handler(
-        department_list, cd.button_back_callback.filter(value="depart_list")
-    )
     dp.register_callback_query_handler(info_depart, cd.depart_info_callback.filter())
     dp.register_callback_query_handler(
         edit_depart, cd.depart_button_edit_callback.filter()

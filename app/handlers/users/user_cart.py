@@ -24,8 +24,7 @@ async def cart_call(call: CallbackQuery):
     chat_id, message_id = await call_chat_and_message(call)
     user_id = call.from_user.id
     text = await cart_db.get_products_from_cart(user_id)
-    cart_kb = InlineKeyboardMarkup()
-    cart_kb.add(back("user_menu"))
+    cart_kb = kb.cart_kb
     await bot.edit_message_text(
         chat_id=chat_id, message_id=message_id, text=text, reply_markup=cart_kb
     )
@@ -62,7 +61,7 @@ async def del_prod_from_cart(call: CallbackQuery):
 async def order_prod_in_cart(call: CallbackQuery):
     chat_id, message_id = await call_chat_and_message(call)
     user_id = call.from_user.id
-    cart_text, cart = await cart_db.get_products_from_cart(user_id)
+    cart_text = await cart_db.get_products_from_cart(user_id)
     if "порожньо" in cart_text:
         text = "Ваш кошик порожній"
         await bot.answer_callback_query(
@@ -71,10 +70,9 @@ async def order_prod_in_cart(call: CallbackQuery):
     else:
         data = call["data"]
         prod_id = data.replace("checkout_cart:", "")
-        cart = json.dumps(cart)
-        cart = cart.replace(":", "#")
-        print(cart)
-        cart_kb = await kb.confirm_cart(prod_id, cart)
+        # cart = json.dumps(cart)
+        # cart = cart.replace(":", "#")
+        cart_kb = await kb.confirm_cart(prod_id)
         text = cart_text + "\n\n <b>Підтверджуєте це замовлення?</b>"
         await bot.edit_message_text(
             chat_id=chat_id, message_id=message_id, text=text, reply_markup=cart_kb

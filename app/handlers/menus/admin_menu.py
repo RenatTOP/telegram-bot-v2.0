@@ -11,7 +11,7 @@ from app.keyboards.inline import menu_buttons as kb
 
 @check_admin
 async def admin_menu(message: Message, state: FSMContext):
-    await state.update_data(check="admin", kind="none")
+    await state.update_data(check="admin")
     await message.answer(text="Хай", reply_markup=kb.admin_menu)
 
 

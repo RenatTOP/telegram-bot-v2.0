@@ -8,7 +8,6 @@ from contextlib import suppress
 from aiogram.types import BotCommand
 from app.settings import BOT_TOKEN
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
-from app.database.database import users
 
 
 loop = asyncio.get_event_loop()

@@ -10,7 +10,7 @@ from app.keyboards.inline import menu_buttons as kb
 
 
 async def user_menu(message: Message, state: FSMContext):
-    await state.update_data(check="user", kind="none")
+    await state.update_data(check="user")
     await message.answer(text="Хай", reply_markup=kb.user_menu)
 
 
@@ -25,7 +25,7 @@ async def user_menu_call(call: CallbackQuery):
 
 
 def register_handlers_user_menu(dp: Dispatcher):
-    dp.register_message_handler(user_menu, commands=["user_menu"])
+    dp.register_message_handler(user_menu, commands=["menu", "user_menu"])
     dp.register_callback_query_handler(
         user_menu_call, cd.button_back_callback.filter(value="user_menu")
     )

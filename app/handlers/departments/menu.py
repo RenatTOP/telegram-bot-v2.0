@@ -8,7 +8,7 @@ from app.keyboards.inline import helper_buttons as help_kb
 
 
 async def departments(call: CallbackQuery, state: FSMContext):
-    await state.finish()
+    await state.reset_state(with_data=False)
     chat_id = call.message.chat.id
     message_id = call.message.message_id
     await bot.edit_message_text(
@@ -20,7 +20,7 @@ async def departments(call: CallbackQuery, state: FSMContext):
 
 
 async def ivoices(call: CallbackQuery, state: FSMContext):
-    await state.finish()
+    await state.reset_state(with_data=False)
     chat_id = call.message.chat.id
     message_id = call.message.message_id
     await bot.edit_message_text(

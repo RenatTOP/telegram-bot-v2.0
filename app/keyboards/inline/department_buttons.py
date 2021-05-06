@@ -1,6 +1,7 @@
 import app.keyboards.inline.callback_datas as cd
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from app.keyboards.inline.helper_buttons import back
+from app.database import departments as depart_db
 
 
 # ?menu Department buttons
@@ -19,14 +20,79 @@ menu_depart = InlineKeyboardMarkup(
         ],
         [
             InlineKeyboardButton(
-                text="⬅ Повернутися",
-                callback_data=cd.button_back_callback.new(value="admin_menu"),
-            )
-        ],
+                text="Заклади за областю та містом",
+                callback_data=cd.depart_menu_callback.new(value="sort"),
+            ),
+        ]
     ]
 )
 menu_depart.add(back("admin_menu"))
 
+# ?list Department buttons
+
+async def departments_list(pages: int, check, sort):
+    depart_list_kb = InlineKeyboardMarkup()
+    departs = await depart_db.departments_list(6, pages, sort)
+    async for depart in departs:
+        _id = depart["_id"]
+        name = depart["name"]
+        region = depart["region"]
+        city = depart["city"]
+        text_button = f"{name},\t {region},\t {city}"
+        if check == "admin":
+            depart_list_kb.add(
+                InlineKeyboardButton(
+                    text=text_button,
+                    callback_data=cd.depart_info_callback.new(_id=f"{_id}"),
+                )
+            )
+        elif check == "user":
+            depart_list_kb.add(
+                InlineKeyboardButton(
+                    text=text_button,
+                    callback_data=cd.choose_depart.new(value=f"{_id}"),
+                )
+            )
+    pages_back = pages - 6
+    pages_next = pages + 6
+    depart_list_kb.add(
+        InlineKeyboardButton(
+            text="<== Попередня сторінка",
+            callback_data=cd.depart_nav_list_callback.new(
+                pages=f"{pages_back}"
+            ),
+        )
+    )
+    depart_list_kb.insert(
+        InlineKeyboardButton(
+            text="Наступна сторінка ==>",
+            callback_data=cd.depart_nav_list_callback.new(
+                pages=f"{pages_next}"
+            ),
+        )
+    )
+    if check == "admin":
+        depart_list_kb.add(back("departments"))
+    return depart_list_kb
+
+async def depart_sort(check):
+    depart_list = await depart_db.find_departments()
+    depart_list_kb = InlineKeyboardMarkup()
+    depart_set = set()
+    async for depart in depart_list:
+        depart = f"{depart['region']}#{depart['city']}"
+        depart_set.add(depart)
+    for depart in depart_set:
+        text = depart.replace("#", ", ")
+        depart_list_kb.add(
+            InlineKeyboardButton(
+                text=text,
+                callback_data=cd.depart_button_sort.new(sort=f"{depart}"),
+            )
+        )
+    if check == "admin":
+        depart_list_kb.add(back("departments"))
+    return depart_list_kb
 
 # ?add Department buttons
 
@@ -112,23 +178,6 @@ add_edit_depart = InlineKeyboardMarkup(
 
 # ?edit Department buttons
 
-async def departments_list(departments: list):
-    depart_list = InlineKeyboardMarkup(row_width=2)
-    async for depart in departments:
-        _id = depart["_id"]
-        name = depart["name"]
-        city = depart["city"]
-        text_button = f"{name}\t\t м. {city}"
-        depart_list.insert(
-            InlineKeyboardButton(
-                text=text_button,
-                callback_data=cd.depart_info_callback.new(_id=f"{_id}"),
-            )
-        )
-    depart_list.add(back("departments"))
-    return depart_list
-
-
 async def info_department(depart_id: str):
     info_depart = InlineKeyboardMarkup(
         inline_keyboard=[
@@ -170,37 +219,45 @@ async def del_department(depart_id: str):
     return del_depart
 
 
-edit_fields = InlineKeyboardMarkup(
-    inline_keyboard=[
-        [
-            InlineKeyboardButton(
-                text="Назва",
-                callback_data=cd.depart_edit_edit_callback.new(field="name"),
-            ),
-            InlineKeyboardButton(
-                text="Область",
-                callback_data=cd.depart_edit_edit_callback.new(field="region"),
-            ),
-        ],
-        [
-            InlineKeyboardButton(
-                text="Телефон",
-                callback_data=cd.depart_edit_edit_callback.new(field="phone"),
-            ),
-            InlineKeyboardButton(
-                text="Місто",
-                callback_data=cd.depart_edit_edit_callback.new(field="city"),
-            ),
-        ],
-        [
-            InlineKeyboardButton(
-                text="Розклад",
-                callback_data=cd.depart_edit_edit_callback.new(field="timetable"),
-            ),
-            InlineKeyboardButton(
-                text="Адреса",
-                callback_data=cd.depart_edit_edit_callback.new(field="address"),
-            ),
-        ],
-    ]
-)
+async def edit_fields(depart_id: str):
+    edit_kb = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text="Назва",
+                    callback_data=cd.depart_edit_edit_callback.new(field="name"),
+                ),
+                InlineKeyboardButton(
+                    text="Область",
+                    callback_data=cd.depart_edit_edit_callback.new(field="region"),
+                ),
+            ],
+            [
+                InlineKeyboardButton(
+                    text="Телефон",
+                    callback_data=cd.depart_edit_edit_callback.new(field="phone"),
+                ),
+                InlineKeyboardButton(
+                    text="Місто",
+                    callback_data=cd.depart_edit_edit_callback.new(field="city"),
+                ),
+            ],
+            [
+                InlineKeyboardButton(
+                    text="Розклад",
+                    callback_data=cd.depart_edit_edit_callback.new(field="timetable"),
+                ),
+                InlineKeyboardButton(
+                    text="Адреса",
+                    callback_data=cd.depart_edit_edit_callback.new(field="address"),
+                ),
+            ],
+            [
+                InlineKeyboardButton(
+                    text="Повернутися",
+                    callback_data=cd.depart_info_callback.new(_id=f"{depart_id}"),
+                ),
+            ],
+        ]
+    )
+    return edit_kb

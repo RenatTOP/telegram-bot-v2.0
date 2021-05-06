@@ -55,8 +55,7 @@ async def product_list(call: CallbackQuery, state: FSMContext):
 
 async def sort_kind_list(call: CallbackQuery, state: FSMContext):
     chat_id, message_id = await call_chat_and_message(call)
-    check = await check_admin_or_user(state)
-    kb_kinds = await kb.kinds_kb(check)
+    kb_kinds = await kb.kinds_kb()
     text = "Оберіть за яким видом сортувати"
     await bot.edit_message_text(
         chat_id=chat_id,

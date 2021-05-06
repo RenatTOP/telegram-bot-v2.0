@@ -5,15 +5,26 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 checkout = ""
 
-async def confirm_cart(prod_id: str, data: str):
+
+cart_kb = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(
+                text="Оформити кошик",
+                callback_data=cd.checkout_cart.new(_id="cart"),
+            ),
+        ],
+    ]
+)
+cart_kb.add(back("user_menu"))
+
+async def confirm_cart(prod_id: str):
     cart = InlineKeyboardMarkup(
         inline_keyboard=[
             [
                 InlineKeyboardButton(
                     text="Так",
-                    callback_data=cd.checkout_order.new(
-                        data=f"{data}"
-                    ),
+                    callback_data=cd.checkout_order.new(data=""),
                 ),
                 InlineKeyboardButton(
                     text="Ні",

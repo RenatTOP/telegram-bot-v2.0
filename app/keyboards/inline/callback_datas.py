@@ -5,9 +5,13 @@ from aiogram.utils.callback_data import CallbackData
 menu_callback = CallbackData("admin_menu", "value")
 button_back_callback = CallbackData("back", "value")
 
+choose_depart = CallbackData("choose", "value")
+
+depart_button_sort = CallbackData("depart_sort", "sort")
 depart_menu_callback = CallbackData("depart_menu", "value")
 depart_confirm_callback = CallbackData("depart_confirm", "value")
 depart_add_edit_callback = CallbackData("depart_add_edit", "field")
+depart_nav_list_callback = CallbackData("nav_depart", "pages")
 depart_info_callback = CallbackData("depart_info_edit", "_id")
 depart_button_edit_callback = CallbackData("depart_edit", "_id")
 depart_button_del_callback = CallbackData("depart_del", "_id")

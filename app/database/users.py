@@ -7,13 +7,17 @@ async def add_user(user_id: int, user_name: str):
         "username": user_name,
         "cart": {},
         "isAdmin": False,
-        "location": {"latitude": 0, "longitude": 0},
+        "location": "",
     }
     await users.insert_one(data)
 
 
 async def add_admin(user_id: int):
     await users.update_one({"userId": user_id}, {"$set": {"isAdmin": True}})
+
+
+async def set_user(user_id: int, key: str, field: str):
+    await users.update_one({"userId": user_id}, {"$set": {key: field}})
 
 
 async def db_check_admin(user_id: int):

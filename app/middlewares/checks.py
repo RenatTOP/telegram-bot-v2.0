@@ -67,14 +67,29 @@ def check_admin(func):
 
 async def check_admin_or_user(state):
     check = await state.get_data()
-    check = check['check']
+    try:
+        check = check['check']
+    except:
+        check = "user"
     return check
 
 
 async def check_kind_state(state):
     kind = await state.get_data()
-    kind = kind['kind']
+    try:
+        kind = kind['kind']
+    except:
+        kind = "none"
     return kind
+
+
+async def check_sort_state(state):
+    sort = await state.get_data()
+    try:
+        sort = sort['sort']
+    except:
+        sort = "none"
+    return sort
 
 
 # def check_admin_or_user(func):
