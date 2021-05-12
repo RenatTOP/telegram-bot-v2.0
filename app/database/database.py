@@ -14,3 +14,5 @@ kinds = db.kinds
 products = db.products
 departments = db.departments
 applications = db.applications
+checkouts = db.checkouts
+

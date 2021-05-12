@@ -3,9 +3,6 @@ from app.keyboards.inline.helper_buttons import back
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
-checkout = ""
-
-
 cart_kb = InlineKeyboardMarkup(
     inline_keyboard=[
         [
@@ -24,13 +21,16 @@ async def confirm_cart(prod_id: str):
             [
                 InlineKeyboardButton(
                     text="Так",
-                    callback_data=cd.checkout_order.new(data=""),
-                ),
-                InlineKeyboardButton(
-                    text="Ні",
-                    callback_data=cd.prod_info_callback.new(_id=f"{prod_id}"),
+                    callback_data=cd.checkout_order.new(data="confirm"),
                 ),
             ],
         ]
+    )
+    cart.insert(
+        InlineKeyboardButton(
+            text="Ні",
+            callback_data=cd.button_back_callback.new(value="cart") if prod_id == "cart" \
+                else cd.prod_info_callback.new(_id=f"{prod_id}"),
+        ),
     )
     return cart

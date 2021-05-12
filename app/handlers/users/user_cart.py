@@ -1,8 +1,8 @@
 import json
 from bot import bot
 from aiogram import Dispatcher
-import aiogram.dispatcher.filters
 from aiogram.utils.markdown import hlink
+from app.database import users as user_db
 from app.database import user_cart as cart_db
 from aiogram.types import Message, CallbackQuery
 from app.keyboards.inline import user_buttons as kb
@@ -12,6 +12,7 @@ from app.middlewares.checks import check_kind, check_cart
 from app.middlewares.helpers import call_chat_and_message
 from app.keyboards.inline.callback_datas import prod_info_callback
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from app.settings import qr_link
 
 
 async def cart(message: Message):
@@ -24,9 +25,8 @@ async def cart_call(call: CallbackQuery):
     chat_id, message_id = await call_chat_and_message(call)
     user_id = call.from_user.id
     text = await cart_db.get_products_from_cart(user_id)
-    cart_kb = kb.cart_kb
     await bot.edit_message_text(
-        chat_id=chat_id, message_id=message_id, text=text, reply_markup=cart_kb
+        chat_id=chat_id, message_id=message_id, text=text, reply_markup=kb.cart_kb
     )
 
 
@@ -62,6 +62,12 @@ async def order_prod_in_cart(call: CallbackQuery):
     chat_id, message_id = await call_chat_and_message(call)
     user_id = call.from_user.id
     cart_text = await cart_db.get_products_from_cart(user_id)
+    check = await user_db.check_location(user_id)
+    if not check:
+        text = "Оберіть заклад  /choose"
+        await bot.answer_callback_query(
+            callback_query_id=call.id, text=text, show_alert=False
+        )
     if "порожньо" in cart_text:
         text = "Ваш кошик порожній"
         await bot.answer_callback_query(
@@ -70,8 +76,6 @@ async def order_prod_in_cart(call: CallbackQuery):
     else:
         data = call["data"]
         prod_id = data.replace("checkout_cart:", "")
-        # cart = json.dumps(cart)
-        # cart = cart.replace(":", "#")
         cart_kb = await kb.confirm_cart(prod_id)
         text = cart_text + "\n\n <b>Підтверджуєте це замовлення?</b>"
         await bot.edit_message_text(
@@ -94,6 +98,9 @@ async def clear_cart(call: CallbackQuery):
 def register_handlers_cart(dp: Dispatcher):
     dp.register_message_handler(cart, commands=["cart"])
     dp.register_callback_query_handler(cart_call, cd.menu_callback.filter(value="Cart"))
+    dp.register_callback_query_handler(
+        cart_call, cd.button_back_callback.filter(value="cart")
+    )
     dp.register_callback_query_handler(add_prod_to_cart, cd.add_to_cart_button.filter())
     dp.register_callback_query_handler(
         del_prod_from_cart, cd.del_from_cart_button.filter()
