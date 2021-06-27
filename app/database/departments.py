@@ -3,7 +3,13 @@ from bson.objectid import ObjectId
 
 
 async def add_department(
-    name: str, region: str, city: str, address: str, phone: str, timetable: dict
+    name: str,
+    region: str,
+    city: str,
+    address: str,
+    phone: str,
+    timetable: dict,
+    admin: int,
 ):
     data = {
         "name": name,
@@ -12,6 +18,7 @@ async def add_department(
         "address": address,
         "phone": phone,
         "timetable": timetable,
+        "admin": admin,
     }
     return await departments.insert_one(data)
 
@@ -38,7 +45,9 @@ async def del_department(_id: str):
 
 
 async def find_departments():
-    departments_list = departments.find({}, {"_id", "name", "region", "city"}).sort("region")
+    departments_list = departments.find({}, {"_id", "name", "region", "city"}).sort(
+        "region"
+    )
     return departments_list
 
 

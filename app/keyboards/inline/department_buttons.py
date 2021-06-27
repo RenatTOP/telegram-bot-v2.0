@@ -1,7 +1,8 @@
-import app.keyboards.inline.callback_datas as cd
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from app.keyboards.inline.helper_buttons import back
+
 from app.database import departments as depart_db
+from app.keyboards.inline.helper_buttons import back
+from app.keyboards.inline import callback_datas as cd
 
 
 # ?menu Department buttons
@@ -250,6 +251,12 @@ async def edit_fields(depart_id: str):
                 InlineKeyboardButton(
                     text="Адреса",
                     callback_data=cd.depart_edit_edit_callback.new(field="address"),
+                ),
+            ],
+            [
+                InlineKeyboardButton(
+                    text="Адміністратор",
+                    callback_data=cd.depart_edit_edit_callback.new(field="admin"),
                 ),
             ],
             [

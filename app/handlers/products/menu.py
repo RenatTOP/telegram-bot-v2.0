@@ -1,7 +1,8 @@
-from bot import bot
 from aiogram import Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message, CallbackQuery
+
+from bot import bot
 from app.keyboards.inline import callback_datas as cd
 from app.middlewares.checks import check_admin_or_user
 from app.keyboards.inline import products_buttons as kb

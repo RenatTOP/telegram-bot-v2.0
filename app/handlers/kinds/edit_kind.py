@@ -1,15 +1,21 @@
-from bot import bot
 from aiogram import Dispatcher
-import app.database.kinds as kind_db
 from aiogram.dispatcher import FSMContext
-from app.middlewares.checks import check_kind
-from aiogram.types import Message, CallbackQuery
-from app.keyboards.inline import callback_datas as cd
-from app.keyboards.inline import kind_buttons as kb
-from app.middlewares.helpers import call_chat_and_message
-from app.keyboards.inline.helper_buttons import back
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.types import (
+    Message,
+    CallbackQuery,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+)
+
+from bot import bot
 from app.states.product import Edit_Kind
+from app.database import kinds as kind_db
+from app.middlewares.checks import check_kind
+from app.keyboards.inline import kind_buttons as kb
+from app.middlewares.state_check import state_check
+from app.keyboards.inline.helper_buttons import back
+from app.keyboards.inline import callback_datas as cd
+from app.middlewares.helpers import call_chat_and_message
 
 
 async def kind_list(call: CallbackQuery):
@@ -77,7 +83,7 @@ async def db_edit_name(message: Message, state: FSMContext):
     else:
         text = "Вид товару був зміненій, а також товари з цим видом були змінені"
         await kind_db.edit_kind(kind_id, name)
-    await state.finish()
+    await state_check(state)
     await message.answer(text, reply_markup=edit_kind_kb)
 
 

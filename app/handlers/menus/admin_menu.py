@@ -1,17 +1,18 @@
-from bot import bot
 from aiogram import Dispatcher
-import app.middlewares.helpers
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message, CallbackQuery
+
+from bot import bot
+from app.middlewares import helpers
 from app.middlewares.checks import check_admin
+from app.keyboards.inline import menu_buttons as kb
 from app.keyboards.inline import callback_datas as cd
 from app.middlewares.helpers import call_chat_and_message
-from app.keyboards.inline import menu_buttons as kb
 
 
 @check_admin
 async def admin_menu(message: Message, state: FSMContext):
-    await state.update_data(check="admin")
+    await state.update_data(check="admin", kind="none")
     await message.answer(text="Хай", reply_markup=kb.admin_menu)
 
 

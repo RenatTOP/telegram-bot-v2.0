@@ -1,8 +1,10 @@
-import app.keyboards.inline.callback_datas as cd
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from app.keyboards.inline.helper_buttons import back
+
 from app.database.kinds import find_kinds
 from app.database import products as prod_db
+from app.keyboards.inline.helper_buttons import back
+from app.keyboards.inline import callback_datas as cd
+
 
 # ?menu Product buttons
 

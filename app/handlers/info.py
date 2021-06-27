@@ -1,12 +1,14 @@
 from aiogram import Dispatcher
+from aiogram.types import Message
 
 
-async def description(message):
-    text = "Бот для онлайн кафе \nПосилання на відео"
+
+async def description(message: Message):
+    text = "Бот для швидких онлайн замовлень у закладах фастфуду"
     await message.answer(text)
 
 
-async def about(message):
+async def about(message: Message):
     text = "Робота Олійника Рената"
     await message.answer(text)
 

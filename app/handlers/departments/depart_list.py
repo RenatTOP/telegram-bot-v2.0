@@ -1,32 +1,24 @@
 import re
-from bot import bot
-import app.middlewares.checks
 from aiogram import Dispatcher
-import aiogram.dispatcher.filters
+from aiogram.dispatcher import filters
 from aiogram.dispatcher import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import (
+    Message,
+    CallbackQuery,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+)
+
+from bot import bot
+from app.middlewares import checks
 from app.database import departments as depart_db
 from app.states.department import Edit_Department
+from app.keyboards.inline.helper_buttons import back
 from app.keyboards.inline import callback_datas as cd
 from app.middlewares.helpers import call_chat_and_message
 from app.keyboards.inline import department_buttons as kb
-from app.keyboards.inline.helper_buttons import back
 from app.handlers.departments.depart_helper import string_week
 from app.middlewares.checks import check_admin_or_user, check_sort_state
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-
-
-# async def department_listf(call: CallbackQuery):
-#     chat_id, message_id = await call_chat_and_message(call)
-#     departments = await depart_db.departments_list()
-#     text = "Перелік закладів"
-#     kb_depart_list = await kb.departments_list(departments)
-#     await bot.edit_message_text(
-#         chat_id=chat_id,
-#         message_id=message_id,
-#         text=text,
-#         reply_markup=kb_depart_list,
-#     )
 
 
 async def department_list(call: CallbackQuery, state: FSMContext):
@@ -80,7 +72,9 @@ def register_handlers_depart_list(dp: Dispatcher):
         department_list, cd.depart_menu_callback.filter(value="list")
     )
     dp.register_callback_query_handler(department_list, cd.depart_button_sort.filter())
-    dp.register_callback_query_handler(department_list, cd.depart_nav_list_callback.filter())
+    dp.register_callback_query_handler(
+        department_list, cd.depart_nav_list_callback.filter()
+    )
     dp.register_callback_query_handler(
         department_list, cd.button_back_callback.filter(value="depart_list")
     )

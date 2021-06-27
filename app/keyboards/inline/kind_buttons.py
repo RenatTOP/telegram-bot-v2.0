@@ -1,6 +1,7 @@
-import app.keyboards.inline.callback_datas as cd
-from app.keyboards.inline.helper_buttons import back
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+
+from app.keyboards.inline import callback_datas as cd
+from app.keyboards.inline.helper_buttons import back
 
 
 async def kinds_list(kinds: list):

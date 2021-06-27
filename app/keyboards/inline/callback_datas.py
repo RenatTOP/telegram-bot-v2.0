@@ -1,4 +1,3 @@
-import aiogram.types
 from aiogram.utils.callback_data import CallbackData
 
 
@@ -44,3 +43,4 @@ add_to_cart_button = CallbackData("add_to_cart", "_id")
 del_from_cart_button = CallbackData("del_from_cart", "_id")
 checkout_cart = CallbackData("checkout_cart", "_id")
 checkout_order = CallbackData("checkout_order", "data")
+time_checkout_order = CallbackData("time_checkout_order", "data")

@@ -1,5 +1,6 @@
-from app.database.database import users
 from bson.objectid import ObjectId
+
+from app.database.database import user
 from app.database.database import products
 
 

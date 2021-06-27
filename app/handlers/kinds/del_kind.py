@@ -1,13 +1,18 @@
-from bot import bot
 from aiogram import Dispatcher
 import aiogram.dispatcher.filters
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import (
+    Message,
+    CallbackQuery,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+)
+
+from bot import bot
 from app.database import kinds as kind_db
-from app.keyboards.inline import callback_datas as cd
-from app.middlewares.helpers import call_chat_and_message
 from app.keyboards.inline import kind_buttons as kb
 from app.keyboards.inline.helper_buttons import back
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from app.keyboards.inline import callback_datas as cd
+from app.middlewares.helpers import call_chat_and_message
 
 
 async def del_kind(call: CallbackQuery):
@@ -38,9 +43,7 @@ async def kind_confirm_del(call: CallbackQuery):
 
 
 def register_handlers_del_kind(dp: Dispatcher):
-    dp.register_callback_query_handler(
-        del_kind, cd.kind_button_del_callback.filter()
-    )
+    dp.register_callback_query_handler(del_kind, cd.kind_button_del_callback.filter())
     dp.register_callback_query_handler(
         kind_confirm_del, cd.kind_button_confirm_del_callback.filter()
     )

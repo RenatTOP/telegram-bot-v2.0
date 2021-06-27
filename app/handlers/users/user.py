@@ -1,15 +1,17 @@
-from bot import bot
 from aiogram import Dispatcher
 from aiogram.types import Message, CallbackQuery
-import app.database.users as user_db
-import app.database.departments as depart_db
+from aiogram.dispatcher.filters import RegexpCommandsFilter
+
+from bot import bot
 from app.settings import SECRET_ADMIN
-import app.middlewares.checks as checks
+from app.database import users as user_db
+from app.middlewares import checks as checks
 from app.database.users import db_check_admin
+from app.database import departments as depart_db
 from app.keyboards.inline import callback_datas as cd
 from app.middlewares.helpers import call_chat_and_message
 from app.keyboards.inline import department_buttons as kb
-from aiogram.dispatcher.filters import RegexpCommandsFilter
+
 
 
 async def initialization(message: Message):

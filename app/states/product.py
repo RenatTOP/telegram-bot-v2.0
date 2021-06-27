@@ -18,9 +18,11 @@ class Edit_Product(StatesGroup):
     edit_about = State()
     edit_picture = State()
 
+
 class Kind(StatesGroup):
     waiting_for_name = State()
     waiting_for_name_prod = State()
+
 
 class Edit_Kind(StatesGroup):
     edit_name = State()

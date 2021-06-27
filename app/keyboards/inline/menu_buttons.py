@@ -1,5 +1,6 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-import app.keyboards.inline.callback_datas as cd
+
+from app.keyboards.inline import callback_datas as cd
 
 
 admin_menu = InlineKeyboardMarkup(

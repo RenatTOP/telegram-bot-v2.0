@@ -1,24 +1,31 @@
 import re
-from bot import bot
-import app.middlewares.checks
 from aiogram import Dispatcher
-import aiogram.dispatcher.filters
+from aiogram.dispatcher import filters
 from aiogram.dispatcher import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import (
+    Message,
+    CallbackQuery,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+)
+
+from bot import bot
+from app.middlewares import checks
 from app.database import departments as depart_db
 from app.states.department import Edit_Department
+from app.middlewares.state_check import state_check
+from app.keyboards.inline.helper_buttons import back
 from app.keyboards.inline import callback_datas as cd
 from app.middlewares.helpers import call_chat_and_message
 from app.keyboards.inline import department_buttons as kb
-from app.keyboards.inline.helper_buttons import back
 from app.handlers.departments.depart_helper import string_week
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+
 
 
 async def info_depart(call: CallbackQuery):
     chat_id, message_id = await call_chat_and_message(call)
     depart_id = call["data"]
-    depart_id = depart_id.split("depart_info_edit:", 1)[1]
+    depart_id = depart_id.replace("depart_info_edit:", "")
     depart_data = await depart_db.find_department(_id=depart_id)
     week = await string_week(depart_data["timetable"])
     text = (
@@ -43,7 +50,7 @@ async def edit_depart(call: CallbackQuery, state=FSMContext):
     chat_id, message_id = await call_chat_and_message(call)
     depart = call["data"]
     depart_id = depart.split("depart_edit:", 1)[1]
-    await state.finish()
+    await state_check(state)
     await state.update_data(_id=depart_id)
     text = "Оберіть що треба редагувати"
     edit_kb = await kb.edit_fields(depart_id)
@@ -90,6 +97,13 @@ async def edit_field(call: CallbackQuery):
             chat_id=chat_id, message_id=message_id, text=text, reply_markup=None
         )
 
+    elif re.search(r"admin", depart):
+        await Edit_Department.edit_admin.set()
+        text = "Введіть новий ID адміністратора закладу"
+        await bot.edit_message_text(
+            chat_id=chat_id, message_id=message_id, text=text, reply_markup=None
+        )
+
     elif re.search(r"timetable", depart):
         await Edit_Department.edit_timetable.set()
         text = "Введіть новий графік робіт закладу"
@@ -121,6 +135,11 @@ async def confirm_change(message: Message, state: FSMContext):
     elif my_state == "Edit_Department:edit_address":
         await depart_db.edit_depart(_id, "address", value)
         await message.answer(text=text, reply_markup=edit_depart)
+
+    elif my_state == "Edit_Department:edit_admin":
+        await depart_db.edit_depart(_id, "admin", int(value))
+        await message.answer(text=text, reply_markup=edit_depart)
+
     elif my_state == "Edit_Department:edit_phone":
         await depart_db.edit_depart(_id, "phone", value)
         await message.answer(text=text, reply_markup=edit_depart)
@@ -154,7 +173,7 @@ async def confirm_change(message: Message, state: FSMContext):
             }
             await depart_db.edit_depart(_id, "timetable", value)
             await message.answer(text=text, reply_markup=edit_depart)
-        await state.finish()
+        await state_check(state)
     except:
         await message.answer(
             "Введіть розклад закладу у порядку\n"
@@ -180,6 +199,7 @@ def register_handlers_edit_department(dp: Dispatcher):
             Edit_Department.edit_city,
             Edit_Department.edit_address,
             Edit_Department.edit_phone,
+            Edit_Department.edit_admin,
             Edit_Department.edit_timetable,
         ],
     )

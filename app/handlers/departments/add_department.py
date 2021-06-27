@@ -1,22 +1,28 @@
-from bot import bot
 from aiogram import Dispatcher
-import app.middlewares.helpers
 from aiogram.dispatcher import FSMContext
+from aiogram.types import (
+    Message,
+    CallbackQuery,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+)
+
+from bot import bot
+from app.middlewares import helpers
 from app.states.department import Department
-import app.database.departments as depart_db
-from aiogram.types import Message, CallbackQuery
+from app.database import departments as depart_db
 from app.middlewares.checks import check_is_admin
+from app.middlewares.state_check import state_check
 from app.handlers.departments.depart_helper import *
-from app.keyboards.inline import callback_datas as cd
-from app.middlewares.helpers import call_chat_and_message
-from app.keyboards.inline import department_buttons as kb
 from app.keyboards.inline.helper_buttons import back
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from app.keyboards.inline import callback_datas as cd
+from app.keyboards.inline import department_buttons as kb
+from app.middlewares.helpers import call_chat_and_message
 
 
 async def add_department(call: CallbackQuery, state: FSMContext):
     chat_id, message_id = await call_chat_and_message(call)
-    await state.finish()
+    await state_check(state)
     await Department.first()
     text = f"Введіть назву закладу"
     await bot.edit_message_text(
@@ -118,6 +124,25 @@ async def depart_phone(message: Message, state: FSMContext):
     else:
         await state.update_data(phone=phone)
         await Department.next()
+        text = "Тепер введіть ID адміністратора закладу"
+        await message.answer(text)
+
+
+async def depart_admin(message: Message, state: FSMContext):
+    admin = message.text
+    admin = int(admin)
+    depart_data = await state.get_data()
+    if "admin" in depart_data:
+        await state.update_data(admin=admin)
+        depart_data = await state.get_data()
+        await Department.waiting_for_confirm.set()
+        timetable = depart_data["timetable"]
+        week = await string_week(timetable)
+        text = await string_confirm(depart_data, week)
+        await message.answer(text, reply_markup=kb.confinm_depart)
+    else:
+        await state.update_data(admin=admin)
+        await Department.next()
         text = (
             "Тепер введіть розклад закладу у порядку\n"
             "від понеділка до неділі наприклад:\n"
@@ -185,13 +210,18 @@ async def confirm_department(call: CallbackQuery, state: FSMContext):
         city = depart_data["city"]
         address = depart_data["address"]
         phone = depart_data["phone"]
+        admin = depart_data["admin"]
         timetable = depart_data["timetable"]
-        await depart_db.add_department(name, region, city, address, phone, timetable)
+        await depart_db.add_department(
+            name, region, city, address, phone, timetable, admin
+        )
         edit_depart = InlineKeyboardMarkup()
         edit_depart.add(back("depart_list"))
         await call.message.edit_reply_markup(reply_markup=None)
-        await call.message.answer(f"Заклад \"{name}\" було додано", reply_markup=edit_depart)
-        await state.finish()
+        await call.message.answer(
+            f'Заклад "{name}" було додано', reply_markup=edit_depart
+        )
+        await state_check(state)
 
     elif call["data"] == "depart_confirm:No":
         text = "Оберіть що треба редагувати:"
@@ -274,6 +304,7 @@ def register_handlers_add_department(dp: Dispatcher):
     dp.register_message_handler(depart_city, state=Department.waiting_for_city)
     dp.register_message_handler(depart_address, state=Department.waiting_for_address)
     dp.register_message_handler(depart_phone, state=Department.waiting_for_phone)
+    dp.register_message_handler(depart_admin, state=Department.waiting_for_admin)
     dp.register_message_handler(
         depart_timetable, state=Department.waiting_for_timetable
     )

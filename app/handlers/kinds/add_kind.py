@@ -1,15 +1,22 @@
-from bot import bot
 from aiogram import Dispatcher
-import app.database.kinds as kind_db
+
 from aiogram.dispatcher import FSMContext
+from aiogram.types import (
+    Message,
+    CallbackQuery,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+)
+
+from bot import bot
+from app.states.product import Kind
+from app.database import kinds as kind_db
 from app.middlewares.checks import check_kind
-from aiogram.types import Message, CallbackQuery
-from app.keyboards.inline import callback_datas as cd
+from app.middlewares.state_check import state_check
 from app.keyboards.inline import kind_buttons as kb
+from app.keyboards.inline import callback_datas as cd
 from app.middlewares.helpers import call_chat_and_message, message_chat_and_message
 from app.keyboards.inline.helper_buttons import back
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from app.states.product import Kind
 
 
 async def add_kind(call: CallbackQuery):
@@ -30,13 +37,13 @@ async def kind_name(message: Message, state: FSMContext):
     name = message.text
     name = name.strip()
     if await check_kind(name):
-        text = 'Такий вид вже існує!'
+        text = "Такий вид вже існує!"
     else:
         await kind_db.add_kind(name)
         text = f'Ви додали вид "{name}"'
     kb_kind_back = InlineKeyboardMarkup()
     kb_kind_back.add(back("kinds"))
-    await state.finish()
+    await state_check(state)
     await message.answer(text, reply_markup=kb_kind_back)
 
 

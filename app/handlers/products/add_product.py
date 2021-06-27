@@ -1,26 +1,29 @@
-from bot import bot
 from aiogram import Dispatcher
-import app.database.kinds as kind_db
-import app.database.products as prod_db
 from aiogram.dispatcher import FSMContext
+from aiogram.types import (
+    Message,
+    CallbackQuery,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+)
+
+from bot import bot
+from app.database import kinds as kind_db
+from app.database import products as prod_db
 from app.states.product import Kind, Product
 from app.middlewares.checks import check_kind
-from aiogram.types import Message, CallbackQuery
+from app.middlewares.state_check import state_check
+from app.keyboards.inline.helper_buttons import back
 from app.keyboards.inline import callback_datas as cd
 from app.middlewares.checks import check_admin_or_user
 from app.keyboards.inline import products_buttons as kb
 from app.middlewares.helpers import call_chat_and_message
-from app.keyboards.inline.helper_buttons import back
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from app.handlers.products.prod_helper import string_kinds, string_confirm
 
 
 async def add_product(call: CallbackQuery, state: FSMContext):
     chat_id, message_id = await call_chat_and_message(call)
-    data = await state.get_data()
-    check, kind = data["check"], data["kind"]
-    await state.finish()
-    await state.update_data(check=check, kind=kind)
+    await state_check(state)
     await Product.first()
     text = f"Введіть назву товару"
     kb_prod_back = InlineKeyboardMarkup()
@@ -101,9 +104,11 @@ async def prod_kind(message: Message, state: FSMContext):
                 ],
             ]
         )
-        text = "Немає такого виду, введіть один"+\
-                "із переліку або створять новий\n"+\
-                f"{kinds}"
+        text = (
+            "Немає такого виду, введіть один"
+            + "із переліку або створять новий\n"
+            + f"{kinds}"
+        )
         await message.answer(text=text, reply_markup=edit_prod)
         return
 
@@ -121,8 +126,7 @@ async def kind_name(message: Message, state: FSMContext):
     kind = await state.get_data()
     kind = kind["add_kind"]
     if kind != name:
-        text = "Введений раніше вид та створений "+\
-                "не співпадають, введіть коректно"
+        text = "Введений раніше вид та створений " + "не співпадають, введіть коректно"
     elif not await check_kind(name):
         await state.update_data(prod_kind=name)
         text = "Новий вид створено\nТепер введіть опис товару"
@@ -131,7 +135,6 @@ async def kind_name(message: Message, state: FSMContext):
     else:
         text = "Такий вид вже є!"
     await message.answer(text)
-    
 
 
 async def prod_about(message: Message, state: FSMContext):
@@ -183,10 +186,7 @@ async def confirm_product(call: CallbackQuery, state: FSMContext):
         await call.message.answer(
             f'Товар "{label}" було додано', reply_markup=edit_prod
         )
-        data = await state.get_data()
-        check, kind = data["check"], data["kind"]
-        await state.finish()
-        await state.update_data(check=check, kind=kind)
+        await state_check(state)
     elif call["data"] == "prod_confirm:No":
         text = "Оберіть що треба редагувати:"
         await bot.edit_message_text(
@@ -256,7 +256,9 @@ def register_handlers_add_product(dp: Dispatcher):
     dp.register_message_handler(prod_kind, state=Product.waiting_for_kind)
     dp.register_message_handler(prod_about, state=Product.waiting_for_about)
     dp.register_message_handler(prod_picture, state=Product.waiting_for_picture)
-    dp.register_callback_query_handler(kind_list, cd.kind_add_callback.filter(value="add"), state="*")
+    dp.register_callback_query_handler(
+        kind_list, cd.kind_add_callback.filter(value="add"), state="*"
+    )
     dp.register_message_handler(kind_name, state=Kind.waiting_for_name_prod)
     dp.register_callback_query_handler(
         confirm_product,

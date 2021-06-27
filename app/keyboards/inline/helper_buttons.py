@@ -1,5 +1,6 @@
-import app.keyboards.inline.callback_datas as cd
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+
+from app.keyboards.inline import callback_datas as cd
 
 
 def back(value: str):

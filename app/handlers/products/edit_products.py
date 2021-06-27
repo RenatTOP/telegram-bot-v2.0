@@ -1,20 +1,22 @@
 import re
-from bot import bot
-import app.middlewares.checks
 from aiogram import Dispatcher
-import aiogram.dispatcher.filters
+from aiogram.dispatcher import filters
 from aiogram.utils.markdown import hlink
 from aiogram.dispatcher import FSMContext
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+
+from bot import bot
+from app.middlewares import checks
 from app.states.product import Edit_Product
 from app.database import products as prod_db
 from app.middlewares.checks import check_kind
 from aiogram.types import Message, CallbackQuery
+from app.middlewares.state_check import state_check
+from app.keyboards.inline.helper_buttons import back
 from app.keyboards.inline import callback_datas as cd
 from app.middlewares.checks import check_admin_or_user
-from app.middlewares.helpers import call_chat_and_message
 from app.keyboards.inline import products_buttons as kb
-from app.keyboards.inline.helper_buttons import back
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from app.middlewares.helpers import call_chat_and_message
 from app.handlers.products.prod_helper import string_kinds, string_confirm
 
 
@@ -45,10 +47,8 @@ async def edit_prod(call: CallbackQuery, state=FSMContext):
     chat_id, message_id = await call_chat_and_message(call)
     prod = call["data"]
     prod_id = prod.replace("prod_edit:", "")
-    data = await state.get_data()
-    check, kind = data["check"], data["kind"]
-    await state.finish()
-    await state.update_data(_id=prod_id, check=check, kind=kind)
+    await state_check(state)
+    await state.update_data(_id=prod_id)
     text = "Оберіть що треба редагувати"
     await bot.edit_message_text(
         chat_id=chat_id, message_id=message_id, text=text, reply_markup=kb.edit_fields
@@ -140,9 +140,7 @@ async def confirm_change(message: Message, state: FSMContext):
         await prod_db.edit_product(_id, "picture", value)
         await message.answer(text=text, reply_markup=edit_prod)
 
-    check, kind = data["check"], data["kind"]
-    await state.finish()
-    await state.update_data(check=check, kind=kind)
+    await state_check(state)
 
 
 def register_handlers_edit_product(dp: Dispatcher):

@@ -1,13 +1,18 @@
-from bot import bot
 from aiogram import Dispatcher
-import aiogram.dispatcher.filters
-from aiogram.types import Message, CallbackQuery
+from aiogram.dispatcher import filters
+from aiogram.types import (
+    Message,
+    CallbackQuery,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+)
+
+from bot import bot
 from app.database import products as prod_db
+from app.keyboards.inline.helper_buttons import back
 from app.keyboards.inline import callback_datas as cd
 from app.keyboards.inline import products_buttons as kb
 from app.middlewares.helpers import call_chat_and_message
-from app.keyboards.inline.helper_buttons import back
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
 async def del_product(call: CallbackQuery):

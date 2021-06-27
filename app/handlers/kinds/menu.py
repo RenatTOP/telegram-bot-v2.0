@@ -1,13 +1,18 @@
 import aiogram.dispatcher
-from bot import bot
 from aiogram import Dispatcher
 from aiogram.dispatcher import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import (
+    Message,
+    CallbackQuery,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+)
+
+from bot import bot
+from app.keyboards.inline.helper_buttons import back
 from app.keyboards.inline import callback_datas as cd
 from app.keyboards.inline import products_buttons as kb
 from app.middlewares.helpers import call_chat_and_message
-from app.keyboards.inline.helper_buttons import back
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
 async def kinds(call: CallbackQuery, state: FSMContext):

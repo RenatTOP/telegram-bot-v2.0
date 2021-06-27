@@ -1,5 +1,6 @@
 from functools import wraps
-import app.database.kinds as kind_db
+
+from app.database import kinds as kind_db
 from app.database.users import db_check_admin
 from app.database.database import users, kinds, products, departments
 

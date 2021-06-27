@@ -1,18 +1,21 @@
-import json
-from bot import bot
 from aiogram import Dispatcher
 from aiogram.utils.markdown import hlink
+from aiogram.types import (
+    Message,
+    CallbackQuery,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+)
+
+from bot import bot
 from app.database import users as user_db
 from app.database import user_cart as cart_db
-from aiogram.types import Message, CallbackQuery
 from app.keyboards.inline import user_buttons as kb
-from app.keyboards.inline import callback_datas as cd
 from app.keyboards.inline.helper_buttons import back
+from app.keyboards.inline import callback_datas as cd
 from app.middlewares.checks import check_kind, check_cart
 from app.middlewares.helpers import call_chat_and_message
 from app.keyboards.inline.callback_datas import prod_info_callback
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from app.settings import qr_link
 
 
 async def cart(message: Message):
@@ -50,9 +53,9 @@ async def del_prod_from_cart(call: CallbackQuery):
         prod = call["data"]
         prod_id = prod.replace("del_from_cart:", "")
         await cart_db.del_product_from_cart(user_id, prod_id)
-        text = "Одиниця товару видалена із кошика"
+        text = "Одиниця товару видалена з кошика"
     except:
-        text = "Товару нема у кошику"
+        text = "Товару нема в кошику"
     await bot.answer_callback_query(
         callback_query_id=call.id, text=text, show_alert=False
     )

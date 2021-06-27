@@ -1,4 +1,5 @@
 from aiogram import Dispatcher
+
 from app.handlers.kinds.add_kind import register_handlers_add_kind
 from app.handlers.kinds.edit_kind import register_handlers_edit_kind
 from app.handlers.kinds.del_kind import register_handlers_del_kind

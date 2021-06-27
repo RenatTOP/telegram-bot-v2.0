@@ -1,7 +1,7 @@
 from app.database.database import checkouts
 
 
-async def add_checkout(number: str, user: int, order: dict, time: str):
+async def add_checkout(number: int, user: int, order: dict, time: str):
     data = {
         "number": number,
         "user": user,

@@ -1,6 +1,7 @@
+from bson.objectid import ObjectId
+
 from app.database.database import users
 from app.database.database import products
-from bson.objectid import ObjectId
 
 
 async def add_user(user_id: int, user_name: str):

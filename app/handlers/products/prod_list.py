@@ -1,22 +1,26 @@
-from bot import bot
-import app.middlewares.checks
+import re
 from aiogram import Dispatcher
-import aiogram.dispatcher.filters
+from aiogram.dispatcher import filters
 from aiogram.utils.markdown import hlink
 from aiogram.dispatcher import FSMContext
+from aiogram.types import (
+    Message,
+    CallbackQuery,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+)
+
+from bot import bot
+import app.middlewares.checks
 from app.states.product import Edit_Product
 from app.middlewares.checks import check_admin_or_user, check_kind_state
 from app.database import products as prod_db
 from app.database import kinds as kind_db
-from aiogram.dispatcher import FSMContext
 from app.middlewares.checks import check_kind
-from aiogram.types import Message, CallbackQuery
 from app.keyboards.inline import callback_datas as cd
 from app.middlewares.helpers import call_chat_and_message
 from app.keyboards.inline import products_buttons as kb
 from app.keyboards.inline import helper_buttons as help_kb
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-import re
 
 
 async def product_list(call: CallbackQuery, state: FSMContext):
@@ -71,7 +75,9 @@ def register_handlers_product_list(dp: Dispatcher):
     )
     dp.register_callback_query_handler(product_list, cd.prod_button_sort.filter())
     dp.register_callback_query_handler(product_list, cd.prod_nav_list_callback.filter())
-    dp.register_callback_query_handler(product_list, cd.button_back_callback.filter(value="prod_list"))
+    dp.register_callback_query_handler(
+        product_list, cd.button_back_callback.filter(value="prod_list")
+    )
     dp.register_callback_query_handler(
         sort_kind_list, cd.prod_menu_callback.filter(value=["sort"])
     )

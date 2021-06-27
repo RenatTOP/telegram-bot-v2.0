@@ -1,5 +1,6 @@
-from app.database.database import products
 from bson.objectid import ObjectId
+
+from app.database.database import products
 from app.keyboards.inline.department_buttons import edit_fields
 
 

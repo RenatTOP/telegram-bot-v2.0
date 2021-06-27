@@ -5,7 +5,6 @@ def add_application(
     user_id: int,
     firstname: str,
     lastname: str,
-    username: str,
     order_prod: dict,
     indicated_time,
     order_time,
@@ -14,8 +13,7 @@ def add_application(
         "userId": user_id,
         "firstname": firstname,
         "lasname": lastname,
-        "username": username,
-        "cart": {order_prod},
+        "cart": order_prod,
         "indicatedTime": indicated_time,
         "orderTime": order_time,
     }

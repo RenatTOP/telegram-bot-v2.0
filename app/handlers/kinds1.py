@@ -1,7 +1,8 @@
 from aiogram import Dispatcher
 from aiogram.types import Message
-import app.database.kinds as kind_db
-import app.middlewares.checks as checks
+
+from app.database import kinds as kind_db
+from app.middlewares import checks as checks
 from app.middlewares.checks import check_is_admin
 from aiogram.dispatcher.filters import RegexpCommandsFilter
 
