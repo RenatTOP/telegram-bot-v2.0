@@ -23,7 +23,7 @@ from app.middlewares.checks import check_admin_or_user, check_sort_state
 
 async def department_list(call: CallbackQuery, state: FSMContext):
     text = "Перелік закладів"
-    sort = await check_kind_state(state)
+    sort = await check_sort_state(state)
     type_sort = "sort"
     call_1 = "depart_sort"
     call_2 = "department"
