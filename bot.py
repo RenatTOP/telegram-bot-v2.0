@@ -27,7 +27,7 @@ async def on_startup(request) -> web.Response:
     Bot.set_current(bot)
     await dp.bot.delete_webhook()
     await dp.bot.set_webhook(WEBHOOK_URL, drop_pending_updates=True)
-    request_body_dict = request.json()
+    request_body_dict = await request.get()
     update = types.Update(**(request_body_dict))
     await dp.process_updates([update])
     return web.Response(status=200)
