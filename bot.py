@@ -23,12 +23,21 @@ async def handle(request):
     return web.Response(text=text)
 
 
-async def on_startup(app: web.Application):
+async def on_startup(request) -> web.Response:
     # await bot.delete_webhook()
     # await bot.set_webhook(WEBHOOK_URL, drop_pending_updates=True)
-    with dp.bot.with_token(BOT_TOKEN, validate_token=True):
-        await dp.bot.delete_webhook()
-        await dp.bot.set_webhook(WEBHOOK_URL, drop_pending_updates=True)
+
+    # with dp.bot.with_token(BOT_TOKEN, validate_token=True):
+    #     await dp.bot.delete_webhook()
+    #     await dp.bot.set_webhook(WEBHOOK_URL, drop_pending_updates=True)
+
+    if request.match_info.get("token") == bot.token:
+        request_body_dict = await request.json()
+        update = types.Update.de_json(request_body_dict)
+        bot.process_new_updates([update])
+        return web.Response()
+    else:
+        return web.Response(status=403)
 
 
 # async def on_shutdown(dispatcher: Dispatcher):
@@ -65,9 +74,9 @@ def main():
     kinds1.register_handlers_CRUD_kinds(dp)
 
     app = web.Application()
-    app.on_startup.append(on_startup)
-    app.add_routes([web.get('/', handle),
-                web.post('/webhook/{token}', execute)])
+    # app.on_startup.append(on_startup)
+    app.router.add_get("/", handle)
+    app.router.add_post("/webhook/{token}/", on_startup)
     web.run_app(app, port=WEBAPP_PORT, host=WEBAPP_HOST)
 
     # import locale
