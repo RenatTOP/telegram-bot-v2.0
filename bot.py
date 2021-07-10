@@ -27,8 +27,18 @@ async def on_startup(request) -> web.Response:
     Bot.set_current(bot)
     await dp.bot.delete_webhook()
     await dp.bot.set_webhook(WEBHOOK_URL, drop_pending_updates=True)
-    request_body_dict = await request.json()
-    update = types.Update(**(request_body_dict))
+    # request_body_dict = await request.json()
+    # update = types.Update(**(request_body_dict))
+    # await dp.process_updates([update])
+    return web.Response(status=200)
+
+
+async def execute(request) -> web.Response:
+    # Bot.set_current(bot)
+    # await dp.bot.delete_webhook()
+    # await dp.bot.set_webhook(WEBHOOK_URL, drop_pending_updates=True)
+    # request_body_dict = await request.json()
+    # update = types.Update(**(request_body_dict))
     await dp.process_updates([update])
     return web.Response(status=200)
 
@@ -50,16 +60,16 @@ def main():
     kinds1.register_handlers_CRUD_kinds(dp)
 
     app = web.Application()
-    # app.on_startup.append(on_startup)
+    app.on_startup.append(on_startup)
     app.router.add_get("/", handle)
-    app.router.add_post(f"/webhook/{BOT_TOKEN}", on_startup)
+    app.router.add_post(f"/webhook/{BOT_TOKEN}", execute)
     web.run_app(app, port=WEBAPP_PORT, host=WEBAPP_HOST)
 
     aiohttp.request('post', WEBHOOK_URL)
 
-    while True:
-        asyncio.sleep(1)
-        aiohttp.request('post', WEBHOOK_URL)
+    # while True:
+    #     asyncio.sleep(1)
+    #     aiohttp.request('post', WEBHOOK_URL)
 
     # import locale
     # import gettext
