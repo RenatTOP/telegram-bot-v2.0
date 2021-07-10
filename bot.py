@@ -41,6 +41,7 @@ async def on_startup(app: web.Application):
 
 async def execute(req: web.Request) -> web.Response:
     token = req.match_info['token']
+    print(token)
     with dp.bot.with_token(token, validate_token=True):
         upds = [types.Update(**(await req.json()))]
         await dp.process_updates(upds)
