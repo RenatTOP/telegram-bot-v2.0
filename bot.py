@@ -55,6 +55,8 @@ def main():
     app.router.add_post(f"/webhook/{BOT_TOKEN}", on_startup)
     web.run_app(app, port=WEBAPP_PORT, host=WEBAPP_HOST)
 
+    aiohttp.request('post', WEBHOOK_URL)
+
     # import locale
     # import gettext
 
