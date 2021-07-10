@@ -23,7 +23,7 @@ async def handle(request):
     return web.Response(text=text)
 
 
-async def on_startup(request) -> web.Response:
+async def startup(request) -> web.Response:
     Bot.set_current(bot)
     await dp.bot.delete_webhook()
     await dp.bot.set_webhook(WEBHOOK_URL)
@@ -61,7 +61,7 @@ def main():
     kinds1.register_handlers_CRUD_kinds(dp)
 
     app = web.Application()
-    app.on_startup.append(on_startup)
+    app.on_startup.append(startup)
     app.router.add_get("/", handle)
     app.router.add_post(f"/webhook/{BOT_TOKEN}", execute)
     web.run_app(app, port=WEBAPP_PORT, host=WEBAPP_HOST)
