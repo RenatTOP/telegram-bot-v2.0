@@ -38,6 +38,14 @@ async def on_startup(app: web.Application):
 #     logging.warning("Bot down")
 
 
+async def execute(req: web.Request) -> web.Response:
+    token = req.match_info['token']
+    with dp.bot.with_token(token, validate_token=True):
+        upds = [types.Update(**(await req.json()))]
+        await dp.process_updates(upds)
+    return web.Response()
+
+
 def main():
     from app.handlers import info, kinds1
     from app.handlers.users import register_handlers_users
@@ -57,7 +65,7 @@ def main():
     app = web.Application()
     app.on_startup.append(on_startup)
     app.add_routes([web.get('/', handle),
-                web.get('/webhook/bot', handle)])
+                web.post('/webhook/{token}', execute)])
     web.run_app(app, port=WEBAPP_PORT, host=WEBAPP_HOST)
 
     # import locale
