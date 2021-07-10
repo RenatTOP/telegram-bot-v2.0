@@ -1,1 +1,1 @@
-web: ado start
+web: python bot.py

@@ -33,23 +33,6 @@ async def on_startup(request) -> web.Response:
     return web.Response(status=200)
 
 
-# async def on_shutdown(dispatcher: Dispatcher):
-#     logging.warning("Shutting down..")
-#     await bot.delete_webhook()
-#     await dp.storage.close()
-#     await dp.storage.wait_closed()
-#     logging.warning("Bot down")
-
-
-async def execute(req: web.Request) -> web.Response:
-    token = req.match_info['token']
-    print(token)
-    with dp.bot.with_token(token, validate_token=True):
-        upds = [types.Update(**(await req.json()))]
-        await dp.process_updates(upds)
-    return web.Response()
-
-
 def main():
     from app.handlers import info, kinds1
     from app.handlers.users import register_handlers_users
@@ -67,7 +50,6 @@ def main():
     kinds1.register_handlers_CRUD_kinds(dp)
 
     app = web.Application()
-    # app.on_startup.append(on_startup)
     app.router.add_get("/", handle)
     app.router.add_post(f"/webhook/{BOT_TOKEN}", on_startup)
     web.run_app(app, port=WEBAPP_PORT, host=WEBAPP_HOST)
@@ -101,4 +83,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except:
+        main()
