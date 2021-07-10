@@ -50,6 +50,7 @@ def main():
     kinds1.register_handlers_CRUD_kinds(dp)
 
     app = web.Application()
+    # app.on_startup.append(on_startup)
     app.router.add_get("/", handle)
     app.router.add_post(f"/webhook/{BOT_TOKEN}", on_startup)
     web.run_app(app, port=WEBAPP_PORT, host=WEBAPP_HOST)
@@ -83,7 +84,4 @@ def main():
 
 
 if __name__ == "__main__":
-    try:
-        main()
-    except:
-        main()
+    main()
