@@ -12,7 +12,7 @@ from app.settings import BOT_TOKEN, WEBHOOK_URL, WEBHOOK_PATH, WEBAPP_HOST, WEBA
 
 
 loop = asyncio.get_event_loop()
-bot = Bot(token=BOT_TOKEN, parse_mode=types.ParseMode.HTML)
+bot = Bot(token=BOT_TOKEN, parse_mode=types.ParseMode.HTML, validate_token=False)
 dp = Dispatcher(bot, storage=MemoryStorage(), loop=loop)
 logging.basicConfig(level=logging.INFO)
 
@@ -26,8 +26,9 @@ async def handle(request):
 async def on_startup(app: web.Application):
     # await bot.delete_webhook()
     # await bot.set_webhook(WEBHOOK_URL, drop_pending_updates=True)
-    await dp.bot.delete_webhook()
-    await dp.bot.set_webhook(WEBHOOK_URL)
+    with dp.bot.with_token(BOT_TOKEN, validate_token=True):
+        await dp.bot.delete_webhook()
+        await dp.bot.set_webhook(WEBHOOK_URL, drop_pending_updates=True)
 
 
 # async def on_shutdown(dispatcher: Dispatcher):
