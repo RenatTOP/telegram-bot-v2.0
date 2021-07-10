@@ -32,6 +32,7 @@ async def on_startup(request) -> web.Response:
     #     await dp.bot.set_webhook(WEBHOOK_URL, drop_pending_updates=True)
 
     if request.match_info.get("token") == bot.token:
+        print(request.match_info.get("token"))
         request_body_dict = await request.json()
         update = types.Update.de_json(request_body_dict)
         bot.process_new_updates([update])
