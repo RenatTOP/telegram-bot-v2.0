@@ -24,7 +24,7 @@ async def handle(request):
 
 
 async def on_startup(request) -> web.Response:
-    await Bot.set_current(bot)
+    Bot.set_current(bot)
     await dp.bot.delete_webhook()
     await dp.bot.set_webhook(WEBHOOK_URL, drop_pending_updates=True)
     request_body_dict = await request.json()
