@@ -28,8 +28,12 @@ async def on_startup(request) -> web.Response:
     # await bot.set_webhook(WEBHOOK_URL, drop_pending_updates=True)
 
     # with dp.bot.with_token(BOT_TOKEN, validate_token=True):
-    await dp.bot.delete_webhook()
-    await dp.bot.set_webhook(WEBHOOK_URL, drop_pending_updates=True)
+    #     await dp.bot.delete_webhook()
+    #     await dp.bot.set_webhook(WEBHOOK_URL, drop_pending_updates=True)
+
+    request_body_dict = await request.json()
+    update = types.Update.de_json(request_body_dict)
+    bot.process_new_updates([update])
     return web.Response(status=200)
 
 
