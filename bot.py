@@ -36,7 +36,7 @@ async def on_startup(request) -> web.Response:
         request_body_dict = await request.json()
         update = types.Update.de_json(request_body_dict)
         bot.process_new_updates([update])
-        return web.Response()
+        return web.Response(status=200)
     else:
         return web.Response(status=403)
 
@@ -77,7 +77,7 @@ def main():
     app = web.Application()
     # app.on_startup.append(on_startup)
     app.router.add_get("/", handle)
-    app.router.add_post("/webhook/{token}/", on_startup)
+    app.router.add_post(f"/webhook/{BOT_TOKEN}", on_startup)
     web.run_app(app, port=WEBAPP_PORT, host=WEBAPP_HOST)
 
     # import locale
