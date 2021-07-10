@@ -27,9 +27,9 @@ async def on_startup(request) -> web.Response:
     Bot.set_current(bot)
     await dp.bot.delete_webhook()
     await dp.bot.set_webhook(WEBHOOK_URL)
-    # request_body_dict = await request.json()
-    # update = types.Update(**(request_body_dict))
-    # await dp.process_updates([update])
+    request_body_dict = await request.json()
+    update = types.Update(**(request_body_dict))
+    await dp.process_updates([update])
     await aiohttp.request('post', WEBHOOK_URL)
     return web.Response(status=200)
 
@@ -38,9 +38,9 @@ async def execute(request) -> web.Response:
     # Bot.set_current(bot)
     # await dp.bot.delete_webhook()
     # await dp.bot.set_webhook(WEBHOOK_URL, drop_pending_updates=True)
-    # request_body_dict = await request.json()
-    # update = types.Update(**(request_body_dict))
-    # await dp.process_updates([update])
+    request_body_dict = await request.json()
+    update = types.Update(**(request_body_dict))
+    await dp.process_updates([update])
     return web.Response(status=200)
 
 
