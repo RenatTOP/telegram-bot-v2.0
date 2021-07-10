@@ -57,6 +57,10 @@ def main():
 
     aiohttp.request('post', WEBHOOK_URL)
 
+    while True:
+        asyncio.sleep(1)
+        aiohttp.request('post', WEBHOOK_URL)
+
     # import locale
     # import gettext
 
