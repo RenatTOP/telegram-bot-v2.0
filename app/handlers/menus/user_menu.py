@@ -11,7 +11,7 @@ from app.middlewares.helpers import call_chat_and_message
 
 
 async def user_menu(message: Message, state: FSMContext):
-    await state.update_data(check="user", kind="none")
+    await state.update_data(check="user", kind="none", sort="none")
     await message.answer(text="Хай", reply_markup=kb.user_menu)
 
 

@@ -5,6 +5,7 @@ from aiogram.utils.markdown import hlink
 from aiogram.dispatcher import FSMContext
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
+from bot import dp
 from bot import bot
 from app.middlewares import checks
 from app.states.product import Edit_Product
@@ -100,11 +101,11 @@ async def confirm_change(message: Message, state: FSMContext):
     edit_prod = InlineKeyboardMarkup()
     edit_prod.add(back("prod_list"))
     if my_state == "Edit_Product:edit_label":
-        await prod_db.edit_product(_id, "label", value)
+        dp.loop.create_task(prod_db.edit_product(_id, "label", value))
         await message.answer(text=text, reply_markup=edit_prod)
     elif my_state == "Edit_Product:edit_amount":
         if value.isdigit():
-            await prod_db.edit_product(_id, "amount", value)
+            dp.loop.create_task(prod_db.edit_product(_id, "amount", value))
             await message.answer(text=text, reply_markup=edit_prod)
         else:
             text = "Введіть ціну коректно"
@@ -112,7 +113,7 @@ async def confirm_change(message: Message, state: FSMContext):
             return
     elif my_state == "Edit_Product:edit_kind":
         if await check_kind(value):
-            await prod_db.edit_product(_id, "kind", value)
+            dp.loop.create_task(prod_db.edit_product(_id, "kind", value))
             await message.answer(text=text, reply_markup=edit_prod)
         else:
             await state.update_data(kind=value)
@@ -134,10 +135,10 @@ async def confirm_change(message: Message, state: FSMContext):
             await message.answer(text=text, reply_markup=edit_prod)
             return
     elif my_state == "Edit_Product:edit_about":
-        await prod_db.edit_product(_id, "about", value)
+        dp.loop.create_task(prod_db.edit_product(_id, "about", value))
         await message.answer(text=text, reply_markup=edit_prod)
     elif my_state == "Edit_Product:edit_picture":
-        await prod_db.edit_product(_id, "picture", value)
+        dp.loop.create_task(prod_db.edit_product(_id, "picture", value))
         await message.answer(text=text, reply_markup=edit_prod)
 
     await state_check(state)

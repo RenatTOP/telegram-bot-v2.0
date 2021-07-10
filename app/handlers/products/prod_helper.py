@@ -1,7 +1,7 @@
 from app.database.kinds import find_kinds
 
 
-async def string_confirm(prod_data: dict):
+async def string_confirm(prod_data: dict) -> str:
     text = (
         f'Ви додаєте товар <b>{prod_data["label"]}</b>\n'
         f'Ціна: <b>{int(prod_data["amount"])/100.00} грн.</b>,\n'
@@ -11,7 +11,7 @@ async def string_confirm(prod_data: dict):
     )
     return text
 
-async def string_kinds():
+async def string_kinds() -> str:
     kinds = await find_kinds()
     text = "\n"
     async for kind in kinds:

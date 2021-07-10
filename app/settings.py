@@ -3,21 +3,23 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-BOT_TOKEN = os.getenv('BOT_TOKEN') #? token bot
-HEROKU_APP_NAME = os.getenv('HEROKU_APP_NAME') #? app name Heroku
-SECRET_ADMIN = os.getenv('SECRET_ADMIN') #? Admin secret key 
-DATABASE = os.getenv('DATABASE') #? database link
+BOT_TOKEN = os.getenv('BOT_TOKEN') #? token bot, get in botfather_bot
+SECRET_ADMIN = os.getenv('SECRET_ADMIN') #? Admin secret key, you random key
+DATABASE = os.getenv('DATABASE') #? database link, local MongoDB
+DATABASE_PROD = os.getenv('DATABASE_PROD')
 
+
+#? Heroku deploy options
+HEROKU_APP_NAME = os.getenv('HEROKU_APP_NAME') #? app name Heroku
 
 WEBHOOK_HOST = f'https://{HEROKU_APP_NAME}.herokuapp.com' #? Heroku host
 WEBHOOK_PATH = f'/webhook/bot' #? Heroku path in host
 WEBHOOK_URL = f'{WEBHOOK_HOST}{WEBHOOK_PATH}' #? Heroku full URL
-
-
 WEBAPP_HOST = '0.0.0.0' #? app host
 WEBAPP_PORT = os.getenv('PORT') #? app port
 
 
+#? QR options
 QR_COLOR = "000000" #? color for QR code
 QR_BG_COLOR = "FFFFFF" #? background color for QR code
 

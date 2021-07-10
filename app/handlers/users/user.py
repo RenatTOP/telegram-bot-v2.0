@@ -2,6 +2,7 @@ from aiogram import Dispatcher
 from aiogram.types import Message, CallbackQuery
 from aiogram.dispatcher.filters import RegexpCommandsFilter
 
+from bot import dp
 from bot import bot
 from app.settings import SECRET_ADMIN
 from app.database import users as user_db
@@ -68,7 +69,7 @@ async def is_admin(message: Message):
         if check_admin["isAdmin"]:
             await message.answer("Ви адмін")
         elif secret_admin[1].strip() == SECRET_ADMIN:
-            await user_db.add_admin(user_id)
+            dp.loop.create_task(user_db.add_admin(user_id))
             await message.answer(
                 "Вітаю, ви тепер адмін\n"
                 "Видаліть будь-ласка попереднє повідомлення із таємним ключем"
@@ -83,9 +84,15 @@ async def is_admin(message: Message):
         )
 
 
+async def get_my_ID(message: Message):
+    user_id = message.from_user.id
+    await message.answer(f"Ваш ID:\n{user_id}")
+
+
 def register_handlers_init_users(dp: Dispatcher):
     dp.register_message_handler(initialization, commands=["start"])
     dp.register_message_handler(choose_depart, commands=["choose"])
+    dp.register_message_handler(get_my_ID, commands=["my_id"])
     dp.register_message_handler(
         is_admin, RegexpCommandsFilter(regexp_commands=["is_admin .", "is_admin"])
     )

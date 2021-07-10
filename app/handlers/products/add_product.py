@@ -7,6 +7,7 @@ from aiogram.types import (
     InlineKeyboardMarkup,
 )
 
+from bot import dp
 from bot import bot
 from app.database import kinds as kind_db
 from app.database import products as prod_db
@@ -179,7 +180,7 @@ async def confirm_product(call: CallbackQuery, state: FSMContext):
         kind = prod_data["prod_kind"]
         about = prod_data["about"]
         picture = prod_data["picture"]
-        await prod_db.add_product(label, amount, kind, about, picture)
+        dp.loop.create_task(prod_db.add_product(label, amount, kind, about, picture))
         edit_prod = InlineKeyboardMarkup()
         edit_prod.add(back("products"))
         await call.message.edit_reply_markup(reply_markup=None)

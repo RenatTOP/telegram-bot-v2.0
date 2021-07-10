@@ -9,6 +9,7 @@ from aiogram.types import (
     InlineKeyboardMarkup,
 )
 
+from bot import dp
 from bot import bot
 from app.middlewares import checks
 from app.database import departments as depart_db
@@ -121,27 +122,27 @@ async def confirm_change(message: Message, state: FSMContext):
     edit_depart = InlineKeyboardMarkup()
     edit_depart.add(back("depart_list"))
     if my_state == "Edit_Department:edit_name":
-        await depart_db.edit_depart(_id, "name", value)
+        dp.loop.create_task(depart_db.edit_depart(_id, "name", value))
         await message.answer(text=text, reply_markup=edit_depart)
 
     elif my_state == "Edit_Department:edit_region":
-        await depart_db.edit_depart(_id, "region", value)
+        dp.loop.create_task(depart_db.edit_depart(_id, "region", value))
         await message.answer(text=text, reply_markup=edit_depart)
 
     elif my_state == "Edit_Department:edit_city":
-        await depart_db.edit_depart(_id, "city", value)
+        dp.loop.create_task(depart_db.edit_depart(_id, "city", value))
         await message.answer(text=text, reply_markup=edit_depart)
 
     elif my_state == "Edit_Department:edit_address":
-        await depart_db.edit_depart(_id, "address", value)
+        dp.loop.create_task(depart_db.edit_depart(_id, "address", value))
         await message.answer(text=text, reply_markup=edit_depart)
 
     elif my_state == "Edit_Department:edit_admin":
-        await depart_db.edit_depart(_id, "admin", int(value))
+        dp.loop.create_task(depart_db.edit_depart(_id, "admin", int(value)))
         await message.answer(text=text, reply_markup=edit_depart)
 
     elif my_state == "Edit_Department:edit_phone":
-        await depart_db.edit_depart(_id, "phone", value)
+        dp.loop.create_task(depart_db.edit_depart(_id, "phone", value))
         await message.answer(text=text, reply_markup=edit_depart)
     try:
         if my_state == "Edit_Department:edit_timetable":
@@ -171,7 +172,7 @@ async def confirm_change(message: Message, state: FSMContext):
                 "Субота": saturday,
                 "Неділя": sunday,
             }
-            await depart_db.edit_depart(_id, "timetable", value)
+            dp.loop.create_task(depart_db.edit_depart(_id, "timetable", value))
             await message.answer(text=text, reply_markup=edit_depart)
         await state_check(state)
     except:

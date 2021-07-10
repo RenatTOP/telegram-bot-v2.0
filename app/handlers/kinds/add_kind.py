@@ -8,6 +8,7 @@ from aiogram.types import (
     InlineKeyboardMarkup,
 )
 
+from bot import dp
 from bot import bot
 from app.states.product import Kind
 from app.database import kinds as kind_db
@@ -39,7 +40,7 @@ async def kind_name(message: Message, state: FSMContext):
     if await check_kind(name):
         text = "Такий вид вже існує!"
     else:
-        await kind_db.add_kind(name)
+        dp.loop.create_task(kind_db.add_kind(name))
         text = f'Ви додали вид "{name}"'
     kb_kind_back = InlineKeyboardMarkup()
     kb_kind_back.add(back("kinds"))

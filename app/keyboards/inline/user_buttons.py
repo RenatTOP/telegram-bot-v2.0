@@ -17,7 +17,7 @@ cart_kb = InlineKeyboardMarkup(
 cart_kb.add(back("user_menu"))
 
 
-async def confirm_cart(prod_id: str):
+async def confirm_cart(prod_id: str) -> InlineKeyboardMarkup:
     cart = InlineKeyboardMarkup(
         inline_keyboard=[
             [
@@ -37,7 +37,7 @@ async def confirm_cart(prod_id: str):
     return cart
 
 
-async def time_checkout(indicated_time: str):
+async def time_checkout(indicated_time: str) -> InlineKeyboardMarkup:
     checkout = InlineKeyboardMarkup(
         inline_keyboard=[
             [

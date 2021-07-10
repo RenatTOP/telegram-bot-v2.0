@@ -23,7 +23,7 @@ async def get_count_products(kind):
     return all_products
 
 
-async def get_products(page_size: int, pages: int, kind):
+async def get_products(page_size: int, pages: int, kind: str):
     if kind == 'none' or not kind:
         all_products = products.find({}).limit(page_size).skip(pages).sort("label")
     else:

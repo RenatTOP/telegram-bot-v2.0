@@ -132,7 +132,7 @@ add_edit_prod = InlineKeyboardMarkup(
 # ?edit Product buttons
 
 
-async def products_list(pages: int, check, kind):
+async def products_list(pages: int, check: str, kind: str) -> InlineKeyboardMarkup:
     prod_list_kb = InlineKeyboardMarkup()
     products = await prod_db.get_products(6, pages, kind)
     async for prod in products:
@@ -140,35 +140,27 @@ async def products_list(pages: int, check, kind):
         label = prod["label"]
         amount = prod["amount"]
         text_button = f"{label}\t\t, {amount/100.00} грн."
-        if check == "admin":
-            prod_list_kb.add(
-                InlineKeyboardButton(
-                    text=text_button,
-                    callback_data=cd.prod_info_callback.new(_id=f"{_id}"),
-                )
+        prod_list_kb.add(
+            InlineKeyboardButton(
+                text=text_button,
+                callback_data=cd.prod_info_callback.new(_id=f"{_id}"),
             )
-        elif check == "user":
-            prod_list_kb.add(
-                InlineKeyboardButton(
-                    text=text_button,
-                    callback_data=cd.prod_info_callback.new(_id=f"{_id}"),
-                )
-            )
+        )
     pages_back = pages - 6
     pages_next = pages + 6
     prod_list_kb.add(
         InlineKeyboardButton(
             text="<== Попередня сторінка",
-            callback_data=cd.prod_nav_list_callback.new(
-                pages=f"{pages_back}"
+            callback_data=cd.nav_list_callback.new(
+                pages=f"{pages_back}", data="product"
             ),
         )
     )
     prod_list_kb.insert(
         InlineKeyboardButton(
             text="Наступна сторінка ==>",
-            callback_data=cd.prod_nav_list_callback.new(
-                pages=f"{pages_next}"
+            callback_data=cd.nav_list_callback.new(
+                pages=f"{pages_next}", data="product"
             ),
         )
     )
@@ -176,11 +168,11 @@ async def products_list(pages: int, check, kind):
     return prod_list_kb
 
 
-async def kinds_kb():
+async def kinds_kb() -> InlineKeyboardMarkup:
     kind_list = await find_kinds()
     kind_list_kb = InlineKeyboardMarkup(row_width=2)
     async for kind in kind_list:
-        kind = kind['name']
+        kind = kind["name"]
         kind_list_kb.insert(
             InlineKeyboardButton(
                 text=kind,
@@ -191,14 +183,16 @@ async def kinds_kb():
     return kind_list_kb
 
 
-async def info_product(prod_id: str, check: str):
+async def info_product(prod_id: str, check: str) -> InlineKeyboardMarkup:
     if check == "admin":
         info_prod = InlineKeyboardMarkup(
             inline_keyboard=[
                 [
                     InlineKeyboardButton(
                         text="Редагувати",
-                        callback_data=cd.prod_button_edit_callback.new(_id=f"{prod_id}"),
+                        callback_data=cd.prod_button_edit_callback.new(
+                            _id=f"{prod_id}"
+                        ),
                     ),
                     InlineKeyboardButton(
                         text="Видалити",
@@ -209,38 +203,36 @@ async def info_product(prod_id: str, check: str):
         )
     else:
         info_prod = InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(
-                    text="Додати до кошика",
-                    callback_data=cd.add_to_cart_button.new(_id=f"{prod_id}"),
-                ),
-                InlineKeyboardButton(
-                    text="Видалити із кошика",
-                    callback_data=cd.del_from_cart_button.new(_id=f"{prod_id}"),
-                ),
-            ],
-            [
-                InlineKeyboardButton(
-                    text="Оформити кошик",
-                    callback_data=cd.checkout_cart.new(_id=f"{prod_id}"),
-                ),
-            ],
-        ]
-    )
+            inline_keyboard=[
+                [
+                    InlineKeyboardButton(
+                        text="Додати до кошика",
+                        callback_data=cd.add_to_cart_button.new(_id=f"{prod_id}"),
+                    ),
+                    InlineKeyboardButton(
+                        text="Видалити із кошика",
+                        callback_data=cd.del_from_cart_button.new(_id=f"{prod_id}"),
+                    ),
+                ],
+                [
+                    InlineKeyboardButton(
+                        text="Оформити кошик",
+                        callback_data=cd.checkout_cart.new(_id=f"{prod_id}"),
+                    ),
+                ],
+            ]
+        )
     info_prod.add(back("prod_list"))
     return info_prod
 
 
-async def del_product(prod_id: str):
+async def del_product(prod_id: str) -> InlineKeyboardMarkup:
     del_prod = InlineKeyboardMarkup(
         inline_keyboard=[
             [
                 InlineKeyboardButton(
                     text="Так",
-                    callback_data=cd.checkout_order.new(
-                        _id=f"{prod_id}"
-                    ),
+                    callback_data=cd.checkout_order.new(_id=f"{prod_id}"),
                 ),
                 InlineKeyboardButton(
                     text="Ні",

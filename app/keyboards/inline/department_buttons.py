@@ -31,7 +31,7 @@ menu_depart.add(back("admin_menu"))
 
 # ?list Department buttons
 
-async def departments_list(pages: int, check, sort):
+async def departments_list(pages: int, check: str, sort: str) -> InlineKeyboardMarkup:
     depart_list_kb = InlineKeyboardMarkup()
     departs = await depart_db.departments_list(6, pages, sort)
     async for depart in departs:
@@ -59,16 +59,16 @@ async def departments_list(pages: int, check, sort):
     depart_list_kb.add(
         InlineKeyboardButton(
             text="<== Попередня сторінка",
-            callback_data=cd.depart_nav_list_callback.new(
-                pages=f"{pages_back}"
+            callback_data=cd.nav_list_callback.new(
+                pages=f"{pages_back}", data="department"
             ),
         )
     )
     depart_list_kb.insert(
         InlineKeyboardButton(
             text="Наступна сторінка ==>",
-            callback_data=cd.depart_nav_list_callback.new(
-                pages=f"{pages_next}"
+            callback_data=cd.nav_list_callback.new(
+                pages=f"{pages_next}", data="department"
             ),
         )
     )
@@ -76,7 +76,7 @@ async def departments_list(pages: int, check, sort):
         depart_list_kb.add(back("departments"))
     return depart_list_kb
 
-async def depart_sort(check):
+async def depart_sort(check) -> InlineKeyboardMarkup:
     depart_list = await depart_db.find_departments()
     depart_list_kb = InlineKeyboardMarkup()
     depart_set = set()
@@ -179,7 +179,7 @@ add_edit_depart = InlineKeyboardMarkup(
 
 # ?edit Department buttons
 
-async def info_department(depart_id: str):
+async def info_department(depart_id: str) -> InlineKeyboardMarkup:
     info_depart = InlineKeyboardMarkup(
         inline_keyboard=[
             [
@@ -200,7 +200,7 @@ async def info_department(depart_id: str):
     return info_depart
 
 
-async def del_department(depart_id: str):
+async def del_department(depart_id: str) -> InlineKeyboardMarkup:
     del_depart = InlineKeyboardMarkup(
         inline_keyboard=[
             [
@@ -220,7 +220,7 @@ async def del_department(depart_id: str):
     return del_depart
 
 
-async def edit_fields(depart_id: str):
+async def edit_fields(depart_id: str) -> InlineKeyboardMarkup:
     edit_kb = InlineKeyboardMarkup(
         inline_keyboard=[
             [

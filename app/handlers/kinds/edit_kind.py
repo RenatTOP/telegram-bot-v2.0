@@ -7,6 +7,7 @@ from aiogram.types import (
     InlineKeyboardMarkup,
 )
 
+from bot import dp
 from bot import bot
 from app.states.product import Edit_Kind
 from app.database import kinds as kind_db
@@ -82,7 +83,7 @@ async def db_edit_name(message: Message, state: FSMContext):
         text = "Такий вид вже існує!"
     else:
         text = "Вид товару був зміненій, а також товари з цим видом були змінені"
-        await kind_db.edit_kind(kind_id, name)
+        dp.loop.create_task(kind_db.edit_kind(kind_id, name))
     await state_check(state)
     await message.answer(text, reply_markup=edit_kind_kb)
 

@@ -7,6 +7,7 @@ from aiogram.types import (
     InlineKeyboardMarkup,
 )
 
+from bot import dp
 from bot import bot
 from app.database import products as prod_db
 from app.keyboards.inline.helper_buttons import back
@@ -36,7 +37,7 @@ async def prod_confirm_del(call: CallbackQuery):
     text = "Ви видалили цей товар"
     edit_prod = InlineKeyboardMarkup()
     edit_prod.add(back("kinds"))
-    await prod_db.del_product(prod_id)
+    dp.loop.create_task(prod_db.del_product(prod_id))
     await bot.edit_message_text(
         chat_id=chat_id, message_id=message_id, text=text, reply_markup=edit_prod
     )

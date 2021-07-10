@@ -12,7 +12,7 @@ from app.middlewares.helpers import call_chat_and_message
 
 @check_admin
 async def admin_menu(message: Message, state: FSMContext):
-    await state.update_data(check="admin", kind="none")
+    await state.update_data(check="admin", kind="none", sort="none")
     await message.answer(text="Хай", reply_markup=kb.admin_menu)
 
 

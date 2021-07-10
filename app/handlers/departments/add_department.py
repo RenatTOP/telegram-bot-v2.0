@@ -7,6 +7,7 @@ from aiogram.types import (
     InlineKeyboardMarkup,
 )
 
+from bot import dp
 from bot import bot
 from app.middlewares import helpers
 from app.states.department import Department
@@ -212,9 +213,9 @@ async def confirm_department(call: CallbackQuery, state: FSMContext):
         phone = depart_data["phone"]
         admin = depart_data["admin"]
         timetable = depart_data["timetable"]
-        await depart_db.add_department(
+        dp.loop.create_task(depart_db.add_department(
             name, region, city, address, phone, timetable, admin
-        )
+        ))
         edit_depart = InlineKeyboardMarkup()
         edit_depart.add(back("depart_list"))
         await call.message.edit_reply_markup(reply_markup=None)

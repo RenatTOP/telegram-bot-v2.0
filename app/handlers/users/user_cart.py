@@ -7,6 +7,7 @@ from aiogram.types import (
     InlineKeyboardMarkup,
 )
 
+from bot import dp
 from bot import bot
 from app.database import users as user_db
 from app.database import user_cart as cart_db
@@ -90,7 +91,7 @@ async def clear_cart(call: CallbackQuery):
     user_id = call.from_user.id
     if await check_cart(user_id):
         text = "Ваш кошик тепер порожній"
-        await cart_db.clear_cart(user_id)
+        dp.loop.create_task(cart_db.clear_cart(user_id))
     else:
         text = "Ваш кошик порожній"
     await bot.answer_callback_query(

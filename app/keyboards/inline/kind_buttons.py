@@ -4,7 +4,7 @@ from app.keyboards.inline import callback_datas as cd
 from app.keyboards.inline.helper_buttons import back
 
 
-async def kinds_list(kinds: list):
+async def kinds_list(kinds: list) -> InlineKeyboardMarkup:
     kind_list = InlineKeyboardMarkup(row_width=4)
     async for kind in kinds:
         _id = kind["_id"]
@@ -20,7 +20,7 @@ async def kinds_list(kinds: list):
     return kind_list
 
 
-async def info_kind(kind_id: str):
+async def info_kind(kind_id: str) -> InlineKeyboardMarkup:
     info_kind = InlineKeyboardMarkup(
         inline_keyboard=[
             [
@@ -76,7 +76,7 @@ confirm_or_fail_cancel = InlineKeyboardMarkup(
 )
 
 
-async def del_kind(kind_id: str):
+async def del_kind(kind_id: str) -> InlineKeyboardMarkup:
     del_kind = InlineKeyboardMarkup(
         inline_keyboard=[
             [

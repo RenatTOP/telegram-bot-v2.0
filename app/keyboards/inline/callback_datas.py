@@ -3,6 +3,8 @@ from aiogram.utils.callback_data import CallbackData
 
 menu_callback = CallbackData("admin_menu", "value")
 button_back_callback = CallbackData("back", "value")
+nav_list_callback = CallbackData("nav", "pages", "data")
+
 
 choose_depart = CallbackData("choose", "value")
 
@@ -17,6 +19,7 @@ depart_button_del_callback = CallbackData("depart_del", "_id")
 depart_button_confirm_del_callback = CallbackData("depart_confirm_del", "_id")
 depart_edit_edit_callback = CallbackData("depart_edit_edit", "field")
 
+
 prod_button_sort = CallbackData("prod_sort", "kind")
 kind_sort_callback = CallbackData("kind_sort", "sort")
 prod_menu_callback = CallbackData("prod_menu", "value")
@@ -29,13 +32,13 @@ prod_button_del_callback = CallbackData("prod_del", "_id")
 prod_button_confirm_del_callback = CallbackData("prod_confirm_del", "_id")
 prod_edit_edit_callback = CallbackData("prod_edit_edit", "field")
 
+
 kind_menu_callback = CallbackData("kind_menu", "value")
 kind_confirm_callback = CallbackData("kind_confirm", "value")
 kind_add_callback = CallbackData("add_kind", "value")
 kind_info_callback = CallbackData("kind_info_edit", "_id")
 kind_button_edit_callback = CallbackData("kind_edit", "_id")
 kind_button_del_callback = CallbackData("kind_del", "_id")
-
 kind_button_confirm_del_callback = CallbackData("kind_confirm_del", "_id")
 
 
@@ -44,3 +47,6 @@ del_from_cart_button = CallbackData("del_from_cart", "_id")
 checkout_cart = CallbackData("checkout_cart", "_id")
 checkout_order = CallbackData("checkout_order", "data")
 time_checkout_order = CallbackData("time_checkout_order", "data")
+
+
+invoices_sort_callback = CallbackData("invoices_sort", "sort")

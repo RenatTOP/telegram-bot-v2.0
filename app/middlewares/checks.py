@@ -5,7 +5,7 @@ from app.database.users import db_check_admin
 from app.database.database import users, kinds, products, departments
 
 
-async def check_already_user(user_id: int):
+async def check_already_user(user_id: int) -> bool:
     already_user = await users.find_one({'userId': user_id})
     return bool(already_user)
 
@@ -14,33 +14,33 @@ async def check_is_admin(user_id: int):
     return await db_check_admin(user_id)
 
 
-async def find_product(label: str):
+async def find_product(label: str) -> bool:
     find_product = await products.find_one({'label': label})
     return bool(find_product)
 
 
-async def check_empty_kind():
+async def check_empty_kind() -> bool:
     is_empty = await products.find({'kind': ''})
     return bool(is_empty)
 
 
-async def check_kind(name: str):
+async def check_kind(name: str) -> bool:
     find_kind = await kinds.find_one({'name': name})
     return bool(find_kind)
 
 
-async def check_department(name: str):
+async def check_department(name: str) -> bool:
     department = await departments.find_one({'name': name})
     return bool(department)
 
 
-async def check_cart(user_id: int):
+async def check_cart(user_id: int) -> bool:
     cart = await users.find_one({"userId": user_id}, {"cart"})
     cart = cart["cart"]
     return bool(cart)
 
 
-async def check_prod_in_cart(user_id: int, prod_id: str):
+async def check_prod_in_cart(user_id: int, prod_id: str) -> str:
     cart = await users.find_one({"userId": user_id}, {"cart"})
     cart = cart["cart"]
     if cart[f"{prod_id}"] == 0:
@@ -66,32 +66,32 @@ def check_admin(func):
     return wrap
 
 
-async def check_admin_or_user(state):
+async def check_admin_or_user(state) -> str:
     check = await state.get_data()
-    try:
-        check = check['check']
-    except:
-        check = "user"
-    return check
+    if "check" in check:
+        return check['check']
+    return "none"
 
 
-async def check_kind_state(state):
+async def check_kind_state(state) -> str:
     kind = await state.get_data()
-    try:
-        kind = kind['kind']
-    except:
-        kind = "none"
-    return kind
+    if "kind" in kind:
+        return kind["kind"]
+    return "none"
 
 
-async def check_sort_state(state):
+async def check_sort_state(state) -> str:
     sort = await state.get_data()
-    try:
-        sort = sort['sort']
-    except:
-        sort = "none"
-    return sort
+    if "sort" in sort:
+        return sort['sort']
+    return "none"
 
+
+async def check_sort_invoice_state(state) -> str:
+    sort = await state.get_data()
+    if "invoice_sort" in sort:
+        return sort['invoice_sort']
+    return "none"
 
 # def check_admin_or_user(func):
 #     @wraps(func)

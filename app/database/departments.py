@@ -51,7 +51,7 @@ async def find_departments():
     return departments_list
 
 
-async def departments_list(page_size: int, pages: int, sort):
+async def departments_list(page_size: int, pages: int, sort: str):
     if sort == "none" or not sort:
         all_departments = departments.find({}).limit(page_size).skip(pages).sort("name")
     else:
@@ -69,3 +69,10 @@ async def departments_list(page_size: int, pages: int, sort):
 
 async def find_department(_id: str):
     return await departments.find_one({"_id": ObjectId(_id)})
+
+
+async def find_department_by_location(region: str, city: str, address: str, name: str):
+    admin = await departments.find_one(
+        {"region": region, "city": city, "address": address, "name": name}, {"admin"}
+    )
+    return admin

@@ -1,6 +1,6 @@
 from bson.objectid import ObjectId
 
-from app.database.database import user
+from app.database.database import users
 from app.database.database import products
 
 
@@ -37,7 +37,7 @@ async def get_products_from_cart(user_id: int) -> str:
     text = "Ваш кошик:\n"
     cart = await users.find_one({"userId": user_id}, {"cart"})
     cart = cart["cart"]
-    suma = 0
+    all_suma = 0
     if cart:
         for key in sorted(cart.keys()):
             products_in_cart = await products.find_one({"_id": ObjectId(key)})
@@ -45,9 +45,14 @@ async def get_products_from_cart(user_id: int) -> str:
             amount = products_in_cart["amount"]
             label = products_in_cart["label"]
             number = cart[key]
-            text += f"\t\t\t\t<i><b>{label}</b>\t <b>{amount/100.0}</b> ₴\t x <b>{number}</b> шт</i> --- <b>{amount/100*number}</b> ₴\n"
-            suma += amount / 100 * number
-        text += f"\nВсього: <b>{suma}</b> ₴"
+            amount_grn = amount / 100.0
+            suma = amount / 100 * number
+            text += (
+                f"\t\t\t\t<i><b>{label}</b>\t <b>{round(amount_grn, 2)}</b> ₴"
+                f" x <b>{number}</b> шт</i> --- <b>{round(suma, 2)}</b> ₴\n"
+            )
+            all_suma += suma
+        text += f"\nВсього: <b>{round(all_suma, 2)}</b> ₴"
     else:
         text += "\t\t\t\t*порожньо*"
     return text

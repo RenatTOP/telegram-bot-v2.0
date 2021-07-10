@@ -7,6 +7,7 @@ from aiogram.types import (
     InlineKeyboardMarkup,
 )
 
+from bot import dp
 from bot import bot
 from app.database import departments as depart_db
 from app.keyboards.inline.helper_buttons import back
@@ -33,7 +34,7 @@ async def depart_confirm_del(call: CallbackQuery):
     chat_id, message_id = await call_chat_and_message(call)
     depart = call["data"]
     depart_id = depart.split("depart_confirm_del:", 1)[1]
-    await depart_db.del_department(depart_id)
+    dp.loop.create_task(depart_db.del_department(depart_id))
     text = "Ви видалили цей заклад"
     edit_depart = InlineKeyboardMarkup()
     edit_depart.add(back("depart_list"))

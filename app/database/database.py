@@ -2,10 +2,10 @@ import os
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from bot import loop
-from app.settings import DATABASE
+from app.settings import DATABASE, DATABASE_PROD
 
 
-client = AsyncIOMotorClient(DATABASE, io_loop=loop)
+client = AsyncIOMotorClient(DATABASE_PROD, io_loop=loop)
 
 db = client.bot
 
@@ -14,5 +14,5 @@ kinds = db.kinds
 products = db.products
 departments = db.departments
 applications = db.applications
-checkouts = db.checkouts
+invoices = db.invoices
 

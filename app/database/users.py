@@ -24,7 +24,7 @@ async def set_user(user_id: int, key: str, field: str):
 
 
 async def check_location(user_id: int):
-    user = await users.find_one({'userId': user_id}, {"location"})
+    user = await users.find_one({"userId": user_id}, {"location"})
     return bool(user["location"])
 
 
@@ -33,20 +33,23 @@ async def get_user_data(user_id: int):
     user = await users.find_one({"userId": user_id}, {"_id": 0})
     cart = user["cart"]
     data = ""
-    suma = 0
+    all_suma = 0
     for key in sorted(cart.keys()):
         products_in_cart = await products.find_one({"_id": ObjectId(key)})
         _id = products_in_cart["_id"]
         amount = products_in_cart["amount"]
         label = products_in_cart["label"]
         number = cart[key]
-        text += f"\t\t\t\t<i><b>{label}</b>\t <b>{amount/100.0}</b> ₴\t x <b>{number}</b> шт</i> --- <b>{amount/100*number}</b> ₴\n"
-        suma += amount / 100 * number
-    text += f"\nВсього: <b>{suma}</b> ₴"
+        amount_grn = amount / 100.0
+        suma = amount / 100 * number
+        text += (
+            f"\t\t\t\t<i><b>{label}</b>\t <b>{round(amount_grn, 2)}</b> ₴"
+            f"\t x <b>{number}</b> шт</i> --- <b>{round(suma, 2)}</b> ₴\n"
+        )
+        all_suma += suma
+    text += f"\nВсього: <b>{round(all_suma, 2)}</b> ₴"
     return user, cart, text
 
 
 async def db_check_admin(user_id: int):
-    return await users.find_one({'userId': user_id}, {'isAdmin': True})
-
-
+    return await users.find_one({"userId": user_id}, {"isAdmin": True})

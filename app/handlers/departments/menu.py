@@ -12,6 +12,7 @@ async def departments(call: CallbackQuery, state: FSMContext):
     await state.reset_state(with_data=False)
     chat_id = call.message.chat.id
     message_id = call.message.message_id
+    await state.update_data(sort="none")
     await bot.edit_message_text(
         chat_id=chat_id,
         message_id=message_id,
