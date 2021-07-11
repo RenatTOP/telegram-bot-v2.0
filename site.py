@@ -1,6 +1,6 @@
 import os
 
-from app.settings import HEROKU_APP_NAME
+from bot import HEROKU_APP_NAME
 
 
 if not HEROKU_APP_NAME:
