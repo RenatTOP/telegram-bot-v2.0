@@ -8,7 +8,7 @@ from aiogram import Bot, Dispatcher, executor, types
 from aiogram.utils.exceptions import MessageNotModified
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
-from app.settings import BOT_TOKEN, WEBHOOK_URL, WEBHOOK_PATH, WEBAPP_HOST, WEBAPP_PORT
+from app.settings import BOT_TOKEN, WEBHOOK_URL, WEBHOOK_PATH, WEBAPP_HOST, WEBAPP_PORT, HEROKU_APP_NAME
 
 
 loop = asyncio.get_event_loop()
@@ -98,7 +98,7 @@ if __name__ == "__main__":
     kinds1.register_handlers_CRUD_kinds(dp)
     
 
-    if "HEROKU" in list(os.environ.keys()):
+    if HEROKU_APP_NAME:
         app.on_startup.append(on_startup)
         app.router.add_post(f"/webhook/{BOT_TOKEN}", execute)
         web.run_app(app, port=WEBAPP_PORT, host=WEBAPP_HOST)
