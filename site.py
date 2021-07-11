@@ -4,7 +4,7 @@ from bot import HEROKU_APP_NAME
 
 
 if not HEROKU_APP_NAME:
-    from aiohttp import web
+    from bot import web
 
     from bot import app
 
