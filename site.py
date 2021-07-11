@@ -1,3 +1,6 @@
+import os
+
+
 if not "HEROKU" in list(os.environ.keys()):
     from aiohttp import web
 
