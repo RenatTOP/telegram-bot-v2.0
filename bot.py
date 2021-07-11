@@ -62,20 +62,6 @@ async def main(dp):
     kinds1.register_handlers_CRUD_kinds(dp)
 
 
-    # import locale
-    # import gettext
-
-    # domain = "helloworld"
-    # current_locale = "uk_UA"
-    # print("Current locale: {}".format(current_locale))
-    # locale_path = "locale/"
-    # gnu_translations = gettext.translation(
-    #     domain="helloworld", localedir=locale_path, languages=[current_locale]
-    # )
-    # gnu_translations.install()
-    # print(_("helloworld")) #pylint:disable=undefined-variable
-
-
 app = web.Application()
 app.router.add_get("/", handle)
 app.router.add_post(f"/disable_bot/{BOT_TOKEN}", on_shutdown)
