@@ -62,7 +62,7 @@ async def edit_name(call: CallbackQuery, state: FSMContext):
             ]
         ]
     )
-    await state.set_state(await Edit_Kind.first())
+    Edit_Kind.first()
     await state.update_data(kind_id=kind_id)
     await bot.edit_message_text(
         chat_id=chat_id,

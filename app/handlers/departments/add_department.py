@@ -24,7 +24,7 @@ from app.middlewares.helpers import call_chat_and_message
 async def add_department(call: CallbackQuery, state: FSMContext):
     chat_id, message_id = await call_chat_and_message(call)
     await state_check(state)
-    await state.set_state(await Department.first())
+    Department.first()
     text = f"Введіть назву закладу"
     await bot.edit_message_text(
         chat_id=chat_id,
@@ -60,14 +60,14 @@ async def depart_region(message: Message, state: FSMContext):
     if "region" in depart_data:
         await state.update_data(region=region)
         depart_data = await state.get_data()
-        await state.set_state(await Department.waiting_for_confirm.set())
+        Department.waiting_for_confirm.set()
         timetable = depart_data["timetable"]
         week = await string_week(timetable)
         text = await string_confirm(depart_data, week)
         await message.answer(text, reply_markup=kb.confinm_depart)
     else:
         await state.update_data(region=region)
-        await state.set_state(await Department.next())
+        Department.next()
         text = f"Введіть місто у якому знаходиться заклад"
         await message.answer(text)
 
@@ -79,14 +79,14 @@ async def depart_city(message: Message, state: FSMContext):
     if "city" in depart_data:
         await state.update_data(city=city)
         depart_data = await state.get_data()
-        await state.set_state(await Department.waiting_for_confirm.set())
+        Department.waiting_for_confirm.set()
         timetable = depart_data["timetable"]
         week = await string_week(timetable)
         text = await string_confirm(depart_data, week)
         await message.answer(text, reply_markup=kb.confinm_depart)
     else:
         await state.update_data(city=city)
-        await state.set_state(await Department.next())
+        Department.next()
         text = "Тепер введіть адресу закладу"
         await message.answer(text)
 
@@ -98,14 +98,14 @@ async def depart_address(message: Message, state: FSMContext):
     if "address" in depart_data:
         await state.update_data(address=address)
         depart_data = await state.get_data()
-        await state.set_state(await Department.waiting_for_confirm.set())
+        Department.waiting_for_confirm.set()
         timetable = depart_data["timetable"]
         week = await string_week(timetable)
         text = await string_confirm(depart_data, week)
         await message.answer(text, reply_markup=kb.confinm_depart)
     else:
         await state.update_data(address=address)
-        await state.set_state(await Department.next())
+        Department.next()
         text = "Тепер введіть телефон/и закладу"
         await message.answer(text)
 
@@ -117,14 +117,14 @@ async def depart_phone(message: Message, state: FSMContext):
     if "phone" in depart_data:
         await state.update_data(phone=phone)
         depart_data = await state.get_data()
-        await state.set_state(await Department.waiting_for_confirm.set())
+        Department.waiting_for_confirm.set()
         timetable = depart_data["timetable"]
         week = await string_week(timetable)
         text = await string_confirm(depart_data, week)
         await message.answer(text, reply_markup=kb.confinm_depart)
     else:
         await state.update_data(phone=phone)
-        await state.set_state(await Department.next())
+        Department.next()
         text = "Тепер введіть ID адміністратора закладу"
         await message.answer(text)
 
@@ -136,14 +136,14 @@ async def depart_admin(message: Message, state: FSMContext):
     if "admin" in depart_data:
         await state.update_data(admin=admin)
         depart_data = await state.get_data()
-        await state.set_state(await Department.waiting_for_confirm.set())
+        Department.waiting_for_confirm.set()
         timetable = depart_data["timetable"]
         week = await string_week(timetable)
         text = await string_confirm(depart_data, week)
         await message.answer(text, reply_markup=kb.confinm_depart)
     else:
         await state.update_data(admin=admin)
-        await state.set_state(await Department.next())
+        Department.next()
         text = (
             "Тепер введіть розклад закладу у порядку\n"
             "від понеділка до неділі наприклад:\n"
@@ -185,11 +185,11 @@ async def depart_timetable(message: Message, state: FSMContext):
         if "timetable" in depart_data:
             await state.update_data(timetable=timetable)
             depart_data = await state.get_data()
-            await state.set_state(await Department.waiting_for_confirm.set())
+            Department.waiting_for_confirm.set()
         else:
             await state.update_data(timetable=timetable)
             depart_data = await state.get_data()
-            await state.set_state(await Department.next())
+            Department.next()
         week = await string_week(timetable)
         text = await string_confirm(depart_data, week)
         await message.answer(text, reply_markup=kb.confinm_depart)
@@ -234,32 +234,32 @@ async def confirm_department(call: CallbackQuery, state: FSMContext):
         )
 
     elif call["data"] == "depart_add_edit:name":
-        await state.set_state(await Department.waiting_for_name.set())
+        Department.waiting_for_name.set()
         text = "Введіть нову назву закладу"
         await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text)
 
     elif call["data"] == "depart_add_edit:region":
-        await state.set_state(await Department.waiting_for_region.set())
+        Department.waiting_for_region.set()
         text = "Введіть нову область закладу"
         await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text)
 
     elif call["data"] == "depart_add_edit:city":
-        await state.set_state(await Department.waiting_for_city.set())
+        Department.waiting_for_city.set()
         text = "Введіть нове місто закладу"
         await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text)
 
     elif call["data"] == "depart_add_edit:address":
-        await state.set_state(await Department.waiting_for_address.set())
+        Department.waiting_for_address.set()
         text = "Введіть новий адрес закладу"
         await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text)
 
     elif call["data"] == "depart_add_edit:phone":
-        await state.set_state(await Department.waiting_for_phone.set())
+        Department.waiting_for_phone.set()
         text = "Введіть новий телефон закладу"
         await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text)
 
     elif call["data"] == "depart_add_edit:timetable":
-        await state.set_state(await Department.waiting_for_timetable.set())
+        Department.waiting_for_timetable.set()
         text = "Введіть новий розклад закладу"
         await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text)
 

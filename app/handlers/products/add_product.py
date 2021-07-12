@@ -25,7 +25,7 @@ from app.handlers.products.prod_helper import string_kinds, string_confirm
 async def add_product(call: CallbackQuery, state: FSMContext):
     chat_id, message_id = await call_chat_and_message(call)
     await state_check(state)
-    await state.set_state(await Product.first())
+    Product.first()
     text = f"Введіть назву товару"
     kb_prod_back = InlineKeyboardMarkup()
     kb_prod_back.add(back("products"))
@@ -44,12 +44,12 @@ async def prod_label(message: Message, state: FSMContext):
     if "label" in prod_data:
         await state.update_data(label=label)
         prod_data = await state.get_data()
-        await state.set_state(await Product.waiting_for_confirm.set())
+        Product.waiting_for_confirm.set()
         text = await string_confirm(prod_data)
         await message.answer(text, reply_markup=kb.confinm_prod)
     else:
         await state.update_data(label=label)
-        await state.set_state(await Product.next())
+        Product.next()
         text = f"Введіть ціну товару у копійках"
         await message.answer(text)
 
@@ -62,12 +62,12 @@ async def prod_amount(message: Message, state: FSMContext):
         if "amount" in prod_data:
             await state.update_data(amount=amount)
             prod_data = await state.get_data()
-            await state.set_state(await Product.waiting_for_confirm.set())
+            Product.waiting_for_confirm.set()
             text = await string_confirm(prod_data)
             await message.answer(text, reply_markup=kb.confinm_prod)
         else:
             await state.update_data(amount=amount)
-            await state.set_state(await Product.next())
+            Product.next()
             text = f"Введіть вид товару"
             await message.answer(text)
     else:
@@ -84,12 +84,12 @@ async def prod_kind(message: Message, state: FSMContext):
         if "prod_kind" in prod_data:
             await state.update_data(prod_kind=kind)
             prod_data = await state.get_data()
-            await state.set_state(await Product.waiting_for_confirm.set())
+            Product.waiting_for_confirm.set()
             text = await string_confirm(prod_data)
             await message.answer(text, reply_markup=kb.confinm_prod)
         else:
             await state.update_data(prod_kind=kind)
-            await state.set_state(await Product.next())
+            Product.next()
             text = "Введіть опис товару"
             await message.answer(text)
     else:
@@ -117,7 +117,7 @@ async def prod_kind(message: Message, state: FSMContext):
 async def kind_list(call: CallbackQuery, state: FSMContext):
     chat_id, message_id = await call_chat_and_message(call)
     text = "Введіть назву нового виду товарів"
-    await state.set_state(await Kind.waiting_for_name_prod.set())
+    Kind.waiting_for_name_prod.set()
     await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text)
 
 
@@ -131,7 +131,7 @@ async def kind_name(message: Message, state: FSMContext):
     elif not await check_kind(name):
         await state.update_data(prod_kind=name)
         text = "Новий вид створено\nТепер введіть опис товару"
-        await state.set_state(await Product.waiting_for_about.set())
+        Product.waiting_for_about.set()
         await kind_db.add_kind(name)
     else:
         text = "Такий вид вже є!"
@@ -145,12 +145,12 @@ async def prod_about(message: Message, state: FSMContext):
     if "about" in prod_data:
         await state.update_data(about=about)
         prod_data = await state.get_data()
-        await state.set_state(await Product.waiting_for_confirm.set())
+        Product.waiting_for_confirm.set()
         text = await string_confirm(prod_data)
         await message.answer(text, reply_markup=kb.confinm_prod)
     else:
         await state.update_data(about=about)
-        await state.set_state(await Product.next())
+        Product.next()
         text = "Введіть посилання на картинку товару"
         await message.answer(text)
 
@@ -162,10 +162,10 @@ async def prod_picture(message: Message, state: FSMContext):
     if "picture" in prod_data:
         await state.update_data(picture=picture)
         prod_data = await state.get_data()
-        await state.set_state(await Product.waiting_for_confirm.set())
+        Product.waiting_for_confirm.set()
     else:
         await state.update_data(picture=picture)
-        await state.set_state(await Product.next())
+        Product.next()
     prod_data = await state.get_data()
     text = await string_confirm(prod_data)
     await message.answer(text, reply_markup=kb.confinm_prod)
@@ -197,11 +197,11 @@ async def confirm_product(call: CallbackQuery, state: FSMContext):
             reply_markup=kb.add_edit_prod,
         )
     elif call["data"] == "prod_add_edit:label":
-        await state.set_state(await Product.waiting_for_label.set())
+        Product.waiting_for_label.set()
         text = "Введіть нову назву товару"
         await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text)
     elif call["data"] == "prod_add_edit:amount":
-        await state.set_state(await Product.waiting_for_amount.set())
+        Product.waiting_for_amount.set()
         text = "Введіть нову ціну товару у копійках"
         await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text)
     elif call["data"] == "prod_add_edit:prod_kind":
@@ -209,11 +209,11 @@ async def confirm_product(call: CallbackQuery, state: FSMContext):
         text = "Введіть новий вид товару"
         await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text)
     elif call["data"] == "prod_add_edit:about":
-        await state.set_state(await Product.waiting_for_about.set())
+        Product.waiting_for_about.set()
         text = "Введіть новий опис товару"
         await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text)
     elif call["data"] == "prod_add_edit:picture":
-        await state.set_state(await Product.waiting_for_picture.set())
+        Product.waiting_for_picture.set()
         text = "Введіть новие посилання на картинку товару"
         await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text)
 
