@@ -25,8 +25,7 @@ from app.handlers.products.prod_helper import string_kinds, string_confirm
 async def add_product(call: CallbackQuery, state: FSMContext):
     chat_id, message_id = await call_chat_and_message(call)
     await state_check(state)
-    this_state = dp.current_state(user=call.from_user.id)
-    await this_state.set_state(Product.first())
+    await state.set_state(Product.waiting_for_label.set())
     text = f"Введіть назву товару"
     kb_prod_back = InlineKeyboardMarkup()
     kb_prod_back.add(back("products"))
