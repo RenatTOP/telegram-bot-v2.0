@@ -1,0 +1,47 @@
+<div class="sidebar" data-color="" data-background-color="black">
+    <div class="logo">
+        <a href="{{ url('dashboard') }}" class="simple-text logo-normal">
+            Quickfood bot
+        </a>
+    </div>
+    <div class="sidebar-wrapper">
+        <ul class="nav">
+            <li class="nav-item {% if page == 'dashboard' %}active{% endif %}">
+                <a class="nav-link" href="{{ url('dashboard') }}">
+                    <i class="material-icons">dashboard</i>
+                    <p>Адмін панель</p>
+                </a>
+            </li>
+            <li class="nav-item {% if page == 'products' %}active{% endif %}">
+                <a class="nav-link" href="{{ url('products') }}">
+                    <i class="material-icons">fastfood</i>
+                    <p>Товари</p>
+                </a>
+            </li>
+            <li class="nav-item {% if page == 'departments' %}active{% endif %}">
+                <a class="nav-link" href="{{ url('departments') }}">
+                    <i class="material-icons">home_work</i>
+                    <p>Заклади</p>
+                </a>
+            </li>
+            <li class="nav-item {% if page == 'invoices' %}active{% endif %}">
+                <a class="nav-link" href="{{ url('invoices') }}">
+                    <i class="material-icons">receipt</i>
+                    <p>Чеки</p>
+                </a>
+            </li>
+            <li class="nav-item {% if page == 'reports' %}active{% endif %}">
+                <a class="nav-link" href="./icons.html">
+                    <i class="material-icons">report</i>
+                    <p>Скарги</p>
+                </a>
+            </li>
+            <li class="nav-item {% if page == 'users' %}active{% endif %}">
+                <a class="nav-link" href="./map.html">
+                    <i class="material-icons">group</i>
+                    <p>Користувачі</p>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

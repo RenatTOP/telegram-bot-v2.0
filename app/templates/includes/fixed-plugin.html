@@ -1,0 +1,33 @@
+<div class="fixed-plugin">
+    <div class="dropdown show-dropdown">
+        <a href="#" data-toggle="dropdown">
+            <i class="fa fa-cog fa-2x"> </i>
+        </a>
+        <ul class="dropdown-menu">
+            <li class="header-title">Colors</li>
+            <li class="adjustments-line">
+                <a href="javascript:void(0)" class="switch-trigger active-color">
+                    <div class="badge-colors ml-auto mr-auto">
+                        {% set colors = ['green', 'purple', 'azure', 'orange', 'danger'] %}
+                        {% for color in colors %}
+                        <span class="badge filter badge-{{ color }}" data-color="{{ color }}"></span>
+                        {% endfor %}
+                    </div>
+                    <div class="clearfix"></div>
+                </a>
+            </li>
+            <li class="header-title">Theme color</li>
+            <li class="adjustments-line">
+                <a href="javascript:void(0)" class="switch-trigger active-color">
+                    <div class="badge-colors ml-auto mr-auto">
+                        {% set colors = ['light', 'dark'] %}
+                        {% for color in colors %}
+                        <span class="badge filter badge-{{ color }}" data-bg-color="{{ color }}"></span>
+                        {% endfor %}
+                    </div>
+                    <div class="clearfix"></div>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

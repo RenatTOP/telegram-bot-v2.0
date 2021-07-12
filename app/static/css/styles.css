@@ -1,0 +1,9 @@
+.paginator {
+    text-align: right;
+}
+
+input[type=number] {
+    display: inline-block;
+    max-width: 40px;
+    text-align: center;
+}

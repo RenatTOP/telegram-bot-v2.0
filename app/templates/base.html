@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ua">
+
+<head>
+    {% include 'includes/head.html' %}
+    <title>
+        {% block title required %}{% endblock %} - Quickfood bot
+    </title>
+</head>
+
+<body class="">
+    <div class="wrapper ">
+        {% include 'includes/sidebar.html' %}
+        <div class="main-panel">
+            {% include 'includes/navbar.html' %}
+            <div class="content">
+                {% block content required %}{% endblock %}
+            </div>
+            {% include 'includes/footer.html' %}
+        </div>
+    </div>
+    {% include 'includes/fixed-plugin.html' %}
+    {% include 'includes/scripts.html' %}
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

@@ -1,6 +1,8 @@
 import os
+import jinja2
 import logging
 import asyncio
+import aiohttp_jinja2
 from aiohttp import web
 from random import randint
 from aiogram.utils.exceptions import BotBlocked
@@ -8,7 +10,15 @@ from aiogram import Bot, Dispatcher, executor, types
 from aiogram.utils.exceptions import MessageNotModified
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
-from app.settings import BOT_TOKEN, WEBHOOK_URL, WEBHOOK_PATH, WEBAPP_HOST, WEBAPP_PORT, HEROKU_APP_NAME
+from app.routes import routes
+from app.settings import (
+    BOT_TOKEN,
+    WEBHOOK_URL,
+    WEBHOOK_PATH,
+    WEBAPP_HOST,
+    WEBAPP_PORT,
+    HEROKU_APP_NAME,
+)
 
 
 loop = asyncio.get_event_loop()
@@ -17,24 +27,10 @@ dp = Dispatcher(bot, storage=MemoryStorage(), loop=loop)
 logging.basicConfig(level=logging.INFO)
 
 
-
-async def handle(request):
-    name = request.match_info.get('name', "Anonymous")
-    text = "Hello, " + name
-    return web.Response(text=text)
-    
-
 async def on_startup(app: web.Application) -> web.Response:
     Bot.set_current(bot)
     await dp.bot.delete_webhook()
     await dp.bot.set_webhook(WEBHOOK_URL)
-    return web.Response(status=200)
-
-
-async def on_shutdown(request: web.Request) -> web.Response:
-    await dp.storage.close()
-    await dp.storage.wait_closed()
-    await bot.close_bot()
     return web.Response(status=200)
 
 
@@ -63,9 +59,12 @@ async def main(dp):
 
 
 app = web.Application()
-app.router.add_get("/", handle)
-app.router.add_post(f"/disable_bot/{BOT_TOKEN}", on_shutdown)
-
+app.router.add_static("/static/", path="app/static/", name="static")
+aiohttp_jinja2.setup(
+    app, enable_async=True, loader=jinja2.FileSystemLoader("app/templates")
+)
+app["static_root_url"] = "static"
+routes(app)
 
 if __name__ == "__main__":
     from app.handlers import info, kinds1
@@ -82,7 +81,6 @@ if __name__ == "__main__":
     info.register_handlers_info(dp)
     register_handlers_products(dp)
     kinds1.register_handlers_CRUD_kinds(dp)
-    
 
     if HEROKU_APP_NAME:
         app.on_startup.append(on_startup)

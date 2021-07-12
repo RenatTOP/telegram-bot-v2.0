@@ -24,7 +24,7 @@ from app.middlewares.helpers import call_chat_and_message
 async def add_department(call: CallbackQuery, state: FSMContext):
     chat_id, message_id = await call_chat_and_message(call)
     await state_check(state)
-    await Department.first()
+    await state.set_state(Department.first())
     text = f"Введіть назву закладу"
     await bot.edit_message_text(
         chat_id=chat_id,
