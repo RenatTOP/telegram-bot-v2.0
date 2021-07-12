@@ -64,49 +64,49 @@ async def edit_field(call: CallbackQuery):
     chat_id, message_id = await call_chat_and_message(call)
     depart = call["data"]
     if re.search(r"name", depart):
-        Edit_Department.first()
+        await state.set_state(Edit_Department.first())
         text = "Введіть нову назву закладу"
         await bot.edit_message_text(
             chat_id=chat_id, message_id=message_id, text=text, reply_markup=None
         )
 
     elif re.search(r"region", depart):
-        Edit_Department.edit_region.set()
+        await state.set_state(Edit_Department.edit_region.set())
         text = "Введіть нову область закладу"
         await bot.edit_message_text(
             chat_id=chat_id, message_id=message_id, text=text, reply_markup=None
         )
 
     elif re.search(r"city", depart):
-        Edit_Department.edit_city.set()
+        await state.set_state(Edit_Department.edit_city.set())
         text = "Введіть нове місто закладу"
         await bot.edit_message_text(
             chat_id=chat_id, message_id=message_id, text=text, reply_markup=None
         )
 
     elif re.search(r"address", depart):
-        Edit_Department.edit_address.set()
+        await state.set_state(Edit_Department.edit_address.set())
         text = "Введіть нову адресу закладу"
         await bot.edit_message_text(
             chat_id=chat_id, message_id=message_id, text=text, reply_markup=None
         )
 
     elif re.search(r"phone", depart):
-        Edit_Department.edit_phone.set()
+        await state.set_state(Edit_Department.edit_phone.set())
         text = "Введіть новий телефон закладу"
         await bot.edit_message_text(
             chat_id=chat_id, message_id=message_id, text=text, reply_markup=None
         )
 
     elif re.search(r"admin", depart):
-        Edit_Department.edit_admin.set()
+        await state.set_state(Edit_Department.edit_admin.set())
         text = "Введіть новий ID адміністратора закладу"
         await bot.edit_message_text(
             chat_id=chat_id, message_id=message_id, text=text, reply_markup=None
         )
 
     elif re.search(r"timetable", depart):
-        Edit_Department.edit_timetable.set()
+        await state.set_state(Edit_Department.edit_timetable.set())
         text = "Введіть новий графік робіт закладу"
         await bot.edit_message_text(
             chat_id=chat_id, message_id=message_id, text=text, reply_markup=None
