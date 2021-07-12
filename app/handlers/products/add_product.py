@@ -25,7 +25,7 @@ from app.handlers.products.prod_helper import string_kinds, string_confirm
 async def add_product(call: CallbackQuery, state: FSMContext):
     chat_id, message_id = await call_chat_and_message(call)
     await state_check(state)
-    Product.first()
+    await state.set_state(Product.first())
     text = f"Введіть назву товару"
     kb_prod_back = InlineKeyboardMarkup()
     kb_prod_back.add(back("products"))
@@ -117,7 +117,7 @@ async def prod_kind(message: Message, state: FSMContext):
 async def kind_list(call: CallbackQuery, state: FSMContext):
     chat_id, message_id = await call_chat_and_message(call)
     text = "Введіть назву нового виду товарів"
-    await state.set_state(await Kind.waiting_for_name_prod.set())
+    await state.set_state(Kind.waiting_for_name_prod.set())
     await bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=text)
 
 

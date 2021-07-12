@@ -41,14 +41,14 @@ async def depart_name(message: Message, state: FSMContext):
     if "name" in depart_data:
         await state.update_data(name=name)
         depart_data = await state.get_data()
-        Department.waiting_for_confirm.set()
+        await state.set_state(Department.waiting_for_confirm.set())
         timetable = depart_data["timetable"]
         week = await string_week(timetable)
         text = await string_confirm(depart_data, week)
         await message.answer(text, reply_markup=kb.confinm_depart)
     else:
         await state.update_data(name=name)
-        Department.next()
+        await state.set_state(Department.next())
         text = f"Введіть область в якій знаходиться заклад"
         await message.answer(text)
 
