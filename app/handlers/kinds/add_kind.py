@@ -25,7 +25,7 @@ async def add_kind(call: CallbackQuery):
     text = "Введіть назву виду"
     kb_kind_back = InlineKeyboardMarkup()
     kb_kind_back.add(back("kinds"))
-    await state.set_state(Kind.first())
+    await Kind.waiting_for_name.set()
     await bot.edit_message_text(
         chat_id=chat_id,
         message_id=message_id,

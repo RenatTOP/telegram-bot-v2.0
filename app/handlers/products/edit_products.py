@@ -60,31 +60,31 @@ async def edit_field(call: CallbackQuery):
     chat_id, message_id = await call_chat_and_message(call)
     prod = call["data"]
     if re.search(r"label", prod):
-        await state.set_state(Edit_Product.first())
+        await Edit_Product.first()
         text = "Введіть нову назву товару"
         await bot.edit_message_text(
             chat_id=chat_id, message_id=message_id, text=text, reply_markup=None
         )
     elif re.search(r"amount", prod):
-        await state.set_state(Edit_Product.edit_amount.set())
+        await Edit_Product.edit_amount.set()
         text = "Введіть нову ціну товару"
         await bot.edit_message_text(
             chat_id=chat_id, message_id=message_id, text=text, reply_markup=None
         )
     elif re.search(r"kind", prod):
-        await state.set_state(Edit_Product.edit_kind.set())
+        await Edit_Product.edit_kind.set()
         text = "Введіть новий вид товару"
         await bot.edit_message_text(
             chat_id=chat_id, message_id=message_id, text=text, reply_markup=None
         )
     elif re.search(r"about", prod):
-        await state.set_state(Edit_Product.edit_about.set())
+        await Edit_Product.edit_about.set()
         text = "Введіть новий опис товару"
         await bot.edit_message_text(
             chat_id=chat_id, message_id=message_id, text=text, reply_markup=None
         )
     elif re.search(r"picture", prod):
-        await state.set_state(Edit_Product.edit_picture.set())
+        await Edit_Product.edit_picture.set()
         text = "Введіть новие посилання на картинку товару"
         await bot.edit_message_text(
             chat_id=chat_id, message_id=message_id, text=text, reply_markup=None
