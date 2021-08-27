@@ -43,8 +43,7 @@ async def on_startup(app: web.Application) -> web.Response:
 async def execute(request: web.Request) -> web.Response:
     request_body_dict = await request.json()
     update = types.Update(**(request_body_dict))
-    print(request, request_body_dict, update)
-    await dp.process_updates([update])
+    print(await dp.process_updates([update]))
     return web.Response(status=200)
 
 
