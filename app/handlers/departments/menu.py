@@ -53,8 +53,5 @@ def register_handlers_menu_departments(dp: Dispatcher):
         departments, cb.button_back_callback.filter(value=["departments"]), state="*"
     )
     dp.register_callback_query_handler(
-        ivoices, cb.menu_callback.filter(value=["Invoices"]), state="*"
-    )
-    dp.register_callback_query_handler(
         users, cb.menu_callback.filter(value=["Users"]), state="*"
     )

@@ -13,7 +13,7 @@
                 </a>
             </li>
             <li class="nav-item {% if page == 'products' %}active{% endif %}">
-                <a class="nav-link" href="{{ url('products') }}">
+                <a class="nav-link" href="{{ url('products', query_={'pages': 0, 'sort': 'none'}) }}">
                     <i class="material-icons">fastfood</i>
                     <p>Товари</p>
                 </a>

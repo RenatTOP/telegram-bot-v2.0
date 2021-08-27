@@ -6,43 +6,56 @@ from app.database import invoices as invoice_db
 from app.keyboards.inline import callback_datas as cd
 
 
+admin_menu_invoices = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(
+                text="Перелік рахунків",
+                callback_data=cd.invoice_menu_callback.new(value="list"),
+            ),
+            InlineKeyboardButton(
+                text="Рахунки за видом",
+                callback_data=cd.invoice_menu_callback.new(value="sort"),
+            ),
+        ],
+    ]
+)
+admin_menu_invoices.add(back("admin_menu"))
+
+
 sort_invoices = InlineKeyboardMarkup(
     inline_keyboard=[
         [
             InlineKeyboardButton(
                 text="Відкриті",
-                callback_data=cd.invoices_sort_callback.new(value="opened"),
+                callback_data=cd.invoice_sort_callback.new(sort="opened"),
             ),
             InlineKeyboardButton(
                 text="Скасовані",
-                callback_data=cd.invoices_sort_callback.new(value="canceled"),
+                callback_data=cd.invoice_sort_callback.new(sort="canceled"),
             ),
         ],
         [
             InlineKeyboardButton(
                 text="Підтверджені",
-                callback_data=cd.invoices_sort_callback.new(value="confirmed"),
+                callback_data=cd.invoice_sort_callback.new(sort="confirmed"),
             ),
             InlineKeyboardButton(
                 text="Закриті",
-                callback_data=cd.invoices_sort_callback.new(value="closed"),
+                callback_data=cd.invoice_sort_callback.new(sort="closed"),
             ),
         ],
     ]
 )
 
-admin_menu_prod.add(back("admin_menu"))
-
-
-async def invoices_list(pages: int, check: str, sort: str) -> InlineKeyboardMarkup:
+async def invoices_list(pages: int, check: str, kind: str) -> InlineKeyboardMarkup:
     invoice_list_kb = InlineKeyboardMarkup()
-    invoices = await invoice_db.get_invoices(6, pages, sort)
+    invoices = await invoice_db.get_invoices(6, pages, kind)
     async for invoice in invoices:
         _id = invoice["_id"]
-        number = invoice["number"]
-        status = invoice["status"]
-        text_button = f"{number}\t\t, {status}"
-
+        label = invoice["number"]
+        amount = invoice["time"]
+        text_button = f"№ {number}\t\t, T {time}"
         invoice_list_kb.add(
             InlineKeyboardButton(
                 text=text_button,
@@ -69,43 +82,3 @@ async def invoices_list(pages: int, check: str, sort: str) -> InlineKeyboardMark
     )
     invoice_list_kb.add(back("invoices"))
     return invoice_list_kb
-
-
-async def invoices_list(pages: int, check: str, sort: str) -> InlineKeyboardMarkup:
-    prod_list_kb = InlineKeyboardMarkup()
-    products = await prod_db.get_products(6, pages, kind)
-    async for prod in products:
-        _id = prod["_id"]
-        label = prod["label"]
-        amount = prod["amount"]
-        text_button = f"{label}\t\t, {amount/100.00} грн."
-        if check == "admin":
-            prod_list_kb.add(
-                InlineKeyboardButton(
-                    text=text_button,
-                    callback_data=cd.prod_info_callback.new(_id=f"{_id}"),
-                )
-            )
-        elif check == "user":
-            prod_list_kb.add(
-                InlineKeyboardButton(
-                    text=text_button,
-                    callback_data=cd.prod_info_callback.new(_id=f"{_id}"),
-                )
-            )
-    pages_back = pages - 6
-    pages_next = pages + 6
-    prod_list_kb.add(
-        InlineKeyboardButton(
-            text="<== Попередня сторінка",
-            callback_data=cd.prod_nav_list_callback.new(pages=f"{pages_back}"),
-        )
-    )
-    prod_list_kb.insert(
-        InlineKeyboardButton(
-            text="Наступна сторінка ==>",
-            callback_data=cd.prod_nav_list_callback.new(pages=f"{pages_next}"),
-        )
-    )
-    prod_list_kb.add(back("products"))
-    return prod_list_kb

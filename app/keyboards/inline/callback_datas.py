@@ -42,11 +42,21 @@ kind_button_del_callback = CallbackData("kind_del", "_id")
 kind_button_confirm_del_callback = CallbackData("kind_confirm_del", "_id")
 
 
+invoice_button_sort = CallbackData("invoice_sort", "kind")
+invoice_sort_callback = CallbackData("invoice_sort", "sort")
+invoice_menu_callback = CallbackData("invoice_menu", "value")
+invoice_nav_list_callback = CallbackData("nav_invoice", "pages")
+invoice_confirm_callback = CallbackData("invoice_confirm", "value")
+invoice_add_edit_callback = CallbackData("invoice_add_edit", "field")
+invoice_info_callback = CallbackData("invoice_info_edit", "_id")
+invoice_button_edit_callback = CallbackData("invoice_edit", "_id")
+invoice_button_del_callback = CallbackData("invoice_del", "_id")
+invoice_button_confirm_del_callback = CallbackData("invoice_confirm_del", "_id")
+invoice_edit_edit_callback = CallbackData("invoice_edit_edit", "field")
+
+
 add_to_cart_button = CallbackData("add_to_cart", "_id")
 del_from_cart_button = CallbackData("del_from_cart", "_id")
 checkout_cart = CallbackData("checkout_cart", "_id")
 checkout_order = CallbackData("checkout_order", "data")
 time_checkout_order = CallbackData("time_checkout_order", "data")
-
-
-invoices_sort_callback = CallbackData("invoices_sort", "sort")

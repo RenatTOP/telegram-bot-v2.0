@@ -32,7 +32,7 @@ async def info_prod(call: CallbackQuery, state: FSMContext):
         f"{hlink(' ', f'{picture}')}\n"
         f'<b>{prod_data["label"]}</b>\n'
         f'<b>{prod_data["kind"]}</b>,\n'
-        f'<b>{prod_data["amount"]/100.00} грн.</b>,\n'
+        f'<b>{int(prod_data["amount"])/100.00} грн.</b>,\n'
         f'<b>{prod_data["about"]}</b> \n'
     )
     kb_info_prod = await kb.info_product(prod_id, check)

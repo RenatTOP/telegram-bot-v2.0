@@ -8,17 +8,16 @@ async def add_invoice(number: int, user: int, order: dict, time: str, indicated_
         "order": order,
         "time": time,
         "indicated_time": indicated_time,
-        "status": "opened",
-        "confirm": False
+        "status": "opened"
     }
     return await invoices.insert_one(data)
 
 
 async def get_invoices(page_size: int, pages: int, sort: str):
     if sort == 'none' or not sort:
-        all_invoices = invoices.find({}).limit(page_size).skip(pages).sort("time")
+        all_invoices = invoices.find({}).sort("time").limit(page_size).skip(pages)
     else:
-        all_invoices = invoices.find({"status": sort}).limit(page_size).skip(pages).sort("time")
+        all_invoices = invoices.find({"status": sort}).sort("time").limit(page_size).skip(pages)
     return all_invoices
 
 

@@ -36,7 +36,7 @@ async def prod_confirm_del(call: CallbackQuery):
     prod_id = prod.split("prod_confirm_del:", 1)[1]
     text = "Ви видалили цей товар"
     edit_prod = InlineKeyboardMarkup()
-    edit_prod.add(back("kinds"))
+    edit_prod.add(back("products"))
     dp.loop.create_task(prod_db.del_product(prod_id))
     await bot.edit_message_text(
         chat_id=chat_id, message_id=message_id, text=text, reply_markup=edit_prod

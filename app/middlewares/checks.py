@@ -92,15 +92,3 @@ async def check_sort_invoice_state(state) -> str:
     if "invoice_sort" in sort:
         return sort['invoice_sort']
     return "none"
-
-# def check_admin_or_user(func):
-#     @wraps(func)
-#     async def wrap(call_or_message, state):
-#         check = await state.get_data()
-#         print(check)
-#         check = check['check']
-#         if check == "admin":
-#             await func(call_or_message, state, check='admin')
-#         else:
-#             await func(call_or_message, state, check='user')
-#     return wrap

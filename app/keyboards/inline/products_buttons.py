@@ -139,7 +139,7 @@ async def products_list(pages: int, check: str, kind: str) -> InlineKeyboardMark
         _id = prod["_id"]
         label = prod["label"]
         amount = prod["amount"]
-        text_button = f"{label}\t\t, {amount/100.00} грн."
+        text_button = f"{label}\t\t, {int(amount)/100.00} грн."
         prod_list_kb.add(
             InlineKeyboardButton(
                 text=text_button,
@@ -232,7 +232,7 @@ async def del_product(prod_id: str) -> InlineKeyboardMarkup:
             [
                 InlineKeyboardButton(
                     text="Так",
-                    callback_data=cd.checkout_order.new(_id=f"{prod_id}"),
+                    callback_data=cd.prod_button_confirm_del_callback.new(_id=f"{prod_id}"),
                 ),
                 InlineKeyboardButton(
                     text="Ні",

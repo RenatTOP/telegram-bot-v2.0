@@ -5,7 +5,7 @@ load_dotenv()
 
 BOT_TOKEN = os.getenv('BOT_TOKEN') #? token bot, get in botfather_bot
 SECRET_ADMIN = os.getenv('SECRET_ADMIN') #? Admin secret key, you random key
-DATABASE = os.getenv('DATABASE') #? database link, local MongoDB
+DATABASE = 'mongodb://localhost:27017/' #? database link, local MongoDB
 DATABASE_PROD = os.getenv('DATABASE_PROD')
 
 
