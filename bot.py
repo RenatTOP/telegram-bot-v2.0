@@ -35,6 +35,7 @@ async def on_startup(app: web.Application) -> web.Response:
         if not webhook.url:
             await bot.delete_webhook()
         await bot.set_webhook(WEBHOOK_URL)
+    print(webhook)
     Dispatcher.set_current(dp)
     Bot.set_current(bot)
     return web.Response(status=200)
