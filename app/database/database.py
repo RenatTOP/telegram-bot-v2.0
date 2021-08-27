@@ -2,7 +2,7 @@ import os
 import asyncio
 from motor.motor_asyncio import AsyncIOMotorClient
 
-from app.settings import DATABASE, DATABASE_PROD
+from app.settings import DATABASE
 
 
 loop = asyncio.get_event_loop()
