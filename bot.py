@@ -28,10 +28,10 @@ logging.basicConfig(level=logging.INFO)
 
 
 async def on_startup(app: web.Application) -> web.Response:
+    await dp.bot.delete_webhook()
+    await dp.bot.set_webhook(url=WEBHOOK_URL)
     Dispatcher.set_current(dp)
     Bot.set_current(bot)
-    await dp.bot.delete_webhook()
-    await dp.bot.set_webhook(WEBHOOK_URL)
     return web.Response(status=200)
 
 
