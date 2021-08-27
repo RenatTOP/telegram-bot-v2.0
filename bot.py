@@ -22,28 +22,27 @@ from app.settings import (
 
 
 loop = asyncio.get_event_loop()
-bot = Bot(token=BOT_TOKEN, parse_mode=types.ParseMode.HTML)
+bot = Bot(token=BOT_TOKEN, parse_mode=types.ParseMode.HTML, validate_token=False)
 dp = Dispatcher(bot, storage=MemoryStorage(), loop=loop)
 logging.basicConfig(level=logging.INFO)
 
 
 async def on_startup(app: web.Application) -> web.Response:
-    await bot.set_webhook(WEBHOOK_URL)
-
-    webhook = await bot.get_webhook_info()
-    if webhook.url != WEBHOOK_URL:
-        if not webhook.url:
-            await bot.delete_webhook()
-        await bot.set_webhook(WEBHOOK_URL)
     Dispatcher.set_current(dp)
     Bot.set_current(bot)
+    await dp.bot.set_webhook(WEBHOOK_URL)
+    webhook = await dp.bot.get_webhook_info()
+    if webhook.url != WEBHOOK_URL:
+        if not webhook.url:
+            await dp.bot.delete_webhook()
+        await dp.bot.set_webhook(WEBHOOK_URL)
     return web.Response(status=200)
 
 
 async def execute(request: web.Request) -> web.Response:
     request_body_dict = await request.json()
     update = types.Update(**(request_body_dict))
-    print(await dp.process_updates([update]))
+    await dp.process_updates([update])
     return web.Response(status=200)
 
 
