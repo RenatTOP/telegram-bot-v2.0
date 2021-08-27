@@ -35,7 +35,6 @@ async def on_startup(app: web.Application) -> web.Response:
         if not webhook.url:
             await bot.delete_webhook()
         await bot.set_webhook(WEBHOOK_URL)
-    print(webhook)
     Dispatcher.set_current(dp)
     Bot.set_current(bot)
     return web.Response(status=200)
@@ -44,6 +43,7 @@ async def on_startup(app: web.Application) -> web.Response:
 async def execute(request: web.Request) -> web.Response:
     request_body_dict = await request.json()
     update = types.Update(**(request_body_dict))
+    print(request, request_body_dict, update)
     await dp.process_updates([update])
     return web.Response(status=200)
 
