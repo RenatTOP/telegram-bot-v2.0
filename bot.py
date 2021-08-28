@@ -9,6 +9,7 @@ from aiogram.utils.exceptions import BotBlocked
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.utils.exceptions import MessageNotModified
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiogram.dispatcher.webhook import get_new_configured_app
 
 from app.routes import routes
 from app.settings import (
@@ -27,23 +28,14 @@ dp = Dispatcher(bot, storage=MemoryStorage(), loop=loop)
 logging.basicConfig(level=logging.INFO)
 
 
-async def on_startup(app: web.Application) -> web.Response:
-    Dispatcher.set_current(dp)
-    Bot.set_current(bot)
-    await dp.bot.set_webhook(WEBHOOK_URL)
-    webhook = await dp.bot.get_webhook_info()
-    if webhook.url != WEBHOOK_URL:
-        if not webhook.url:
-            await dp.bot.delete_webhook()
-        await dp.bot.set_webhook(WEBHOOK_URL)
-    return web.Response(status=200)
+async def on_startup(app):
+    await bot.delete_webhook()
+    await bot.set_webhook(WEBHOOK_URL)
 
-
-async def execute(request: web.Request) -> web.Response:
-    request_body_dict = await request.json()
-    update = types.Update(**(request_body_dict))
-    await dp.process_updates([update])
-    return web.Response(status=200)
+async def on_shutdown(app):
+    await bot.delete_webhook()
+    await dp.storage.close()
+    await dp.storage.wait_closed()
 
 
 async def main(dp):
@@ -63,7 +55,7 @@ async def main(dp):
     kinds1.register_handlers_CRUD_kinds(dp)
 
 
-app = web.Application()
+app = get_new_configured_app(dispatcher=dp, path=WEBHOOK_PATH)
 app.router.add_static("/static/", path="app/static/", name="static")
 aiohttp_jinja2.setup(
     app, enable_async=True, loader=jinja2.FileSystemLoader("app/templates")
@@ -72,24 +64,10 @@ app["static_root_url"] = "static"
 routes(app)
 
 if __name__ == "__main__":
-    from app.handlers import info, kinds1
-    from app.handlers.users import register_handlers_users
-    from app.handlers.menus import register_handlers_menus
-    from app.handlers.kinds import register_handlers_kinds
-    from app.handlers.products import register_handlers_products
-    from app.handlers.departments import register_handlers_department
-
-    register_handlers_users(dp)
-    register_handlers_menus(dp)
-    register_handlers_department(dp)
-    register_handlers_kinds(dp)
-    info.register_handlers_info(dp)
-    register_handlers_products(dp)
-    kinds1.register_handlers_CRUD_kinds(dp)
-
+    main(dp)
     if HEROKU_APP_NAME:
         app.on_startup.append(on_startup)
-        app.router.add_post(f"/webhook/{BOT_TOKEN}", execute)
+        app.on_shutdown.append(on_shutdown)
         web.run_app(app, port=WEBAPP_PORT, host=WEBAPP_HOST)
     else:
         executor.start_polling(dp, skip_updates=True)
