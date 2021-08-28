@@ -45,7 +45,7 @@ if __name__ == "__main__":
     from app.handlers.kinds import register_handlers_kinds
     from app.handlers.products import register_handlers_products
     from app.handlers.departments import register_handlers_department
-
+    
     register_handlers_users(dp)
     register_handlers_menus(dp)
     register_handlers_department(dp)
@@ -54,16 +54,14 @@ if __name__ == "__main__":
     register_handlers_products(dp)
     kinds1.register_handlers_CRUD_kinds(dp)
 
-    if HEROKU_APP_NAME:
-        app = get_new_configured_app(dispatcher=dp, path=WEBHOOK_PATH)
-        app.router.add_static("/static/", path="app/static/", name="static")
-        aiohttp_jinja2.setup(
-            app, enable_async=True, loader=jinja2.FileSystemLoader("app/templates")
-        )
-        app["static_root_url"] = "static"
-        routes(app)
-        app.on_startup.append(on_startup)
-        app.on_shutdown.append(on_shutdown)
-        web.run_app(app, port=WEBAPP_PORT, host=WEBAPP_HOST)
-    else:
-        executor.start_polling(dp, skip_updates=True)
+    app = get_new_configured_app(dispatcher=dp, path=WEBHOOK_PATH)
+    app.on_startup.append(on_startup)
+    app.on_shutdown.append(on_shutdown)
+    app.router.add_static("/static/", path="app/static/", name="static")
+    aiohttp_jinja2.setup(
+        app, enable_async=True, loader=jinja2.FileSystemLoader("app/templates")
+    )
+    app["static_root_url"] = "static"
+    routes(app)
+
+    web.run_app(app, host=WEBAPP_HOST, port=WEBAPP_PORT)

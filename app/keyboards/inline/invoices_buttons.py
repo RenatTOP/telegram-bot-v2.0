@@ -48,6 +48,8 @@ sort_invoices = InlineKeyboardMarkup(
     ]
 )
 
+
+
 async def invoices_list(pages: int, check: str, kind: str) -> InlineKeyboardMarkup:
     invoice_list_kb = InlineKeyboardMarkup()
     invoices = await invoice_db.get_invoices(6, pages, kind)
@@ -56,6 +58,7 @@ async def invoices_list(pages: int, check: str, kind: str) -> InlineKeyboardMark
         label = invoice["number"]
         amount = invoice["time"]
         text_button = f"№ {number}\t\t, T {time}"
+
         invoice_list_kb.add(
             InlineKeyboardButton(
                 text=text_button,

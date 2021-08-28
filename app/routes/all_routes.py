@@ -58,19 +58,22 @@ async def products(request: web.Request):
 async def departments(request: web.Request):
     context = {"page": "departments"}
     return await aiohttp_jinja2.render_template_async(
-        "departments.html", request, context
+        "departments.html",
+        request, context
     )
-
-
-async def departments_post(request: web.Request):
-    pass
 
 
 async def invoices(request: web.Request):
     context = {"page": "invoices"}
-    return await aiohttp_jinja2.render_template_async("invoices.html", request, context)
+    return await aiohttp_jinja2.render_template_async(
+        "invoices.html",
+        request, context
+    )
 
 
 async def reports(request: web.Request):
     context = {"page": "reports"}
-    return await aiohttp_jinja2.render_template_async("reports.html", request, context)
+    return await aiohttp_jinja2.render_template_async(
+        "reports.html",
+        request, context
+    )

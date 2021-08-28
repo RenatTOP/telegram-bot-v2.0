@@ -32,9 +32,10 @@ async def sort_invoice_list(call: CallbackQuery, state: FSMContext):
 
 def register_handlers_invoice_list(dp: Dispatcher):
     dp.register_callback_query_handler(
-        invoice_list, cd.invoice_menu_callback.filter(value=["list"])
+        pinvoice_list, cd.invoice_menu_callback.filter(value=["list"])
     )
-    dp.register_callback_query_handler(invoice_list, cd.invoice_button_sort.filter())
+    dp.register_callback_query_handler(product_list, cd.prod_button_sort.filter())
+    dp.register_callback_query_handler(invoices_list, cd.nav_list_callback.filter(data="invoice"))
     dp.register_callback_query_handler(
         invoice_list, cd.nav_list_callback.filter(data="invoice")
     )
