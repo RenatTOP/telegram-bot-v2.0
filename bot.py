@@ -38,7 +38,15 @@ async def on_shutdown(app):
     await dp.storage.wait_closed()
 
 
-async def main(dp):
+app = get_new_configured_app(dispatcher=dp, path=WEBHOOK_PATH)
+app.router.add_static("/static/", path="app/static/", name="static")
+aiohttp_jinja2.setup(
+    app, enable_async=True, loader=jinja2.FileSystemLoader("app/templates")
+)
+app["static_root_url"] = "static"
+routes(app)
+
+if __name__ == "__main__":
     from app.handlers import info, kinds1
     from app.handlers.users import register_handlers_users
     from app.handlers.menus import register_handlers_menus
@@ -54,17 +62,6 @@ async def main(dp):
     register_handlers_products(dp)
     kinds1.register_handlers_CRUD_kinds(dp)
 
-
-app = get_new_configured_app(dispatcher=dp, path=WEBHOOK_PATH)
-app.router.add_static("/static/", path="app/static/", name="static")
-aiohttp_jinja2.setup(
-    app, enable_async=True, loader=jinja2.FileSystemLoader("app/templates")
-)
-app["static_root_url"] = "static"
-routes(app)
-
-if __name__ == "__main__":
-    main(dp)
     if HEROKU_APP_NAME:
         app.on_startup.append(on_startup)
         app.on_shutdown.append(on_shutdown)
